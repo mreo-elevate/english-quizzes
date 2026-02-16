@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Loneliness Epidemic - Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f5f5;
+            color: #000;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .quiz-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            border: 3px solid #000;
+            padding: 50px;
+        }
+
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 50px;
+            border-bottom: 3px solid #000;
+            padding-bottom: 30px;
+        }
+
+        .quiz-header h1 {
+            font-size: 2.5em;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            margin: 30px 0;
+            border: 2px solid #000;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #000;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .question-block {
+            margin-bottom: 40px;
+            display: none;
+        }
+
+        .question-block.active {
+            display: block;
+        }
+
+        .question-number {
+            font-size: 0.9em;
+            font-weight: bold;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            border: 2px solid #000;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #fff;
+        }
+
+        .option:hover {
+            background: #f0f0f0;
+        }
+
+        .option input[type="radio"] {
+            margin-right: 15px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .option label {
+            cursor: pointer;
+            flex: 1;
+            font-size: 1em;
+        }
+
+        .option.correct {
+            background: #e8f5e9;
+            border-color: #2e7d32;
+        }
+
+        .option.incorrect {
+            background: #ffebee;
+            border-color: #c62828;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 15px 20px;
+            border-left: 4px solid #000;
+            display: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.correct-feedback {
+            border-left-color: #2e7d32;
+            background: #f1f8f6;
+        }
+
+        .feedback.incorrect-feedback {
+            border-left-color: #c62828;
+            background: #fdf6f6;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+            justify-content: center;
+        }
+
+        button {
+            padding: 15px 40px;
+            font-size: 1em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 2px solid #000;
+            background: #000;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #fff;
+            color: #000;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .results-screen {
+            display: none;
+            text-align: center;
+        }
+
+        .results-screen.show {
+            display: block;
+        }
+
+        .score {
+            font-size: 3em;
+            font-weight: 900;
+            margin: 30px 0;
+        }
+
+        .score-message {
+            font-size: 1.5em;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        .score-breakdown {
+            margin: 40px 0;
+            text-align: left;
+            background: #f5f5f5;
+            padding: 30px;
+            border: 2px solid #000;
+        }
+
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+            font-size: 1.1em;
+        }
+
+        .breakdown-label {
+            font-weight: bold;
+        }
+
+        .breakdown-value {
+            font-weight: bold;
+        }
+
+        .restart-button {
+            margin-top: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .quiz-container {
+                padding: 30px 20px;
+            }
+
+            .quiz-header h1 {
+                font-size: 1.8em;
+            }
+
+            .question-text {
+                font-size: 1.1em;
+            }
+
+            .score {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="quiz-header">
+            <h1>The Loneliness Epidemic</h1>
+            <p>Advanced English Quiz | Grammar, Vocabulary & Critical Thinking</p>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
+
+        <div id="quiz-content">
+            <!-- Questions will be inserted here -->
+        </div>
+
+        <div class="button-group">
+            <button id="prev-btn" onclick="previousQuestion()">← Previous</button>
+            <button id="next-btn" onclick="nextQuestion()">Next →</button>
+        </div>
+
+        <div id="results-screen" class="results-screen">
+            <h2 style="font-size: 2em; margin-bottom: 20px;">Quiz Complete!</h2>
+            <div class="score" id="final-score">0/15</div>
+            <div class="score-message" id="score-message"></div>
+            <div class="score-breakdown">
+                <div class="breakdown-item">
+                    <span class="breakdown-label">Comprehension:</span>
+                    <span class="breakdown-value" id="comp-score">0/3</span>
+                </div>
+                <div class="breakdown-item">
+                    <span class="breakdown-label">Vocabulary:</span>
+                    <span class="breakdown-value" id="vocab-score">0/4</span>
+                </div>
+                <div class="breakdown-item">
+                    <span class="breakdown-label">Grammar:</span>
+                    <span class="breakdown-value" id="grammar-score">0/5</span>
+                </div>
+                <div class="breakdown-item">
+                    <span class="breakdown-label">Critical Thinking:</span>
+                    <span class="breakdown-value" id="critical-score">0/2</span>
+                </div>
+                <div class="breakdown-item">
+                    <span class="breakdown-label">Open-Ended:</span>
+                    <span class="breakdown-value" id="open-score">0/1</span>
+                </div>
+            </div>
+            <button class="restart-button" onclick="restartQuiz()">Restart Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                category: "Comprehension",
+                question: "According to the lesson, what is the main difference between digital connection and true intimacy?",
+                options: [
+                    "Digital connection is faster but less meaningful",
+                    "Digital connection lacks vulnerability, authenticity, and physical presence",
+                    "Digital connection is more reliable",
+                    "Digital connection is more expensive"
+                ],
+                correct: 1
+            },
+            {
+                category: "Comprehension",
+                question: "What does Stanford psychologist Jamil Zaki identify as a crucial barrier to genuine connection?",
+                options: [
+                    "Lack of technology",
+                    "Cynicism about human nature",
+                    "Too much free time",
+                    "Poor communication skills"
+                ],
+                correct: 1
+            },
+            {
+                category: "Comprehension",
+                question: "How do people typically misjudge others according to Zaki's research?",
+                options: [
+                    "They overestimate others' kindness",
+                    "They underestimate how warm, friendly, and trustworthy others are",
+                    "They judge others too quickly",
+                    "They don't judge others at all"
+                ],
+                correct: 1
+            },
+            {
+                category: "Vocabulary",
+                question: "What does 'cynicism' mean in the context of the lesson?",
+                options: [
+                    "A tendency to stay home",
+                    "A belief that people are motivated purely by self-interest and distrust of human motives",
+                    "The use of social media",
+                    "A type of mental illness"
+                ],
+                correct: 1
+            },
+            {
+                category: "Vocabulary",
+                question: "Which term describes a situation that seems to contradict itself but is actually true?",
+                options: [
+                    "Inertia",
+                    "Vulnerability",
+                    "Paradox",
+                    "Authenticity"
+                ],
+                correct: 2
+            },
+            {
+                category: "Vocabulary",
+                question: "What is 'social inertia' according to the lesson?",
+                options: [
+                    "The speed of social media",
+                    "A tendency to remain unchanged; resistance to motion or change in social behavior",
+                    "The number of social media followers",
+                    "A type of social anxiety"
+                ],
+                correct: 1
+            },
+            {
+                category: "Vocabulary",
+                question: "Which word best describes the willingness to be open and honest about one's feelings?",
+                options: [
+                    "Cynicism",
+                    "Authenticity",
+                    "Vulnerability",
+                    "Inertia"
+                ],
+                correct: 2
+            },
+            {
+                category: "Grammar",
+                question: "Which sentence correctly uses a double comparative structure?",
+                options: [
+                    "The more time we spend on social media, the lonelier we become.",
+                    "Social media is more lonely than before.",
+                    "We spend more time on social media than ever.",
+                    "Social media makes us lonely more often."
+                ],
+                correct: 0
+            },
+            {
+                category: "Grammar",
+                question: "Complete the sentence: 'Gen Z is ____ the loneliest generation, with 85% having experienced loneliness.'",
+                options: [
+                    "certainly",
+                    "very",
+                    "by far",
+                    "definitely"
+                ],
+                correct: 2
+            },
+            {
+                category: "Grammar",
+                question: "Which sentence correctly uses the 'as... as' comparative structure?",
+                options: [
+                    "Young adults are not nearly as likely to engage in face-to-face interaction as their parents were.",
+                    "Young adults are not as likely as their parents to engage in face-to-face interaction.",
+                    "Young adults engage in face-to-face interaction as their parents.",
+                    "Young adults are less likely than as their parents."
+                ],
+                correct: 0
+            },
+            {
+                category: "Grammar",
+                question: "Which sentence uses inversion for emphasis?",
+                options: [
+                    "Young people have never been more connected digitally.",
+                    "Never before have young people been more connected digitally yet more isolated emotionally.",
+                    "Young people are more connected digitally than ever before.",
+                    "Digital connection has made young people more isolated."
+                ],
+                correct: 1
+            },
+            {
+                category: "Grammar",
+                question: "Complete the sentence: 'The most significant barrier to connection is ____ that leads us to underestimate how kind others are.'",
+                options: [
+                    "the cynicism",
+                    "cynicism",
+                    "a cynicism",
+                    "the cynical"
+                ],
+                correct: 0
+            },
+            {
+                category: "Critical Thinking",
+                question: "Based on the lesson, what is the primary reason why Gen Z experiences higher loneliness despite being digitally hyperconnected?",
+                options: [
+                    "They don't have enough friends",
+                    "Digital connection lacks the depth, vulnerability, and physical presence needed for genuine intimacy",
+                    "They spend too much money on technology",
+                    "They are not intelligent enough to use social media properly"
+                ],
+                correct: 1
+            },
+            {
+                category: "Critical Thinking",
+                question: "According to the research, what would be the most effective way to increase genuine social connection among young people?",
+                options: [
+                    "Ban all social media",
+                    "Remind people of how much others want to connect and encourage them to take chances on one another",
+                    "Force people to attend social events",
+                    "Teach people to use technology better"
+                ],
+                correct: 1
+            },
+            {
+                category: "Open-Ended",
+                question: "Reflect on your own experience: How has the 'loneliness paradox' (being more connected digitally yet lonelier emotionally) affected your life or the lives of people you know? What strategies could help overcome this paradox?",
+                options: [
+                    "This is an open-ended reflection question. There is no single correct answer. Consider your personal experience and the strategies discussed in the lesson (overcoming cynicism, pushing through social inertia, taking chances on people).",
+                    "",
+                    "",
+                    ""
+                ],
+                correct: 0
+            }
+        ];
+
+        let currentQuestion = 0;
+        let scores = { comprehension: 0, vocabulary: 0, grammar: 0, critical: 0, open: 0 };
+        let answers = new Array(questions.length).fill(null);
+
+        function initializeQuiz() {
+            const quizContent = document.getElementById('quiz-content');
+            quizContent.innerHTML = '';
+
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = `question-block ${index === 0 ? 'active' : ''}`;
+                questionDiv.id = `question-${index}`;
+
+                let optionsHTML = '';
+                if (q.category !== 'Open-Ended') {
+                    optionsHTML = q.options.map((option, optIndex) => `
+                        <div class="option">
+                            <input type="radio" id="option-${index}-${optIndex}" name="question-${index}" value="${optIndex}" onchange="selectAnswer(${index}, ${optIndex})">
+                            <label for="option-${index}-${optIndex}">${option}</label>
+                        </div>
+                    `).join('');
+                } else {
+                    optionsHTML = `<textarea style="width: 100%; height: 150px; padding: 15px; border: 2px solid #000; font-family: Arial; font-size: 1em;" placeholder="Write your reflection here..."></textarea>`;
+                }
+
+                questionDiv.innerHTML = `
+                    <div class="question-number">Question ${index + 1} of ${questions.length} | ${q.category}</div>
+                    <div class="question-text">${q.question}</div>
+                    <div class="options">${optionsHTML}</div>
+                    <div class="feedback" id="feedback-${index}"></div>
+                `;
+
+                quizContent.appendChild(questionDiv);
+            });
+        }
+
+        function selectAnswer(questionIndex, optionIndex) {
+            answers[questionIndex] = optionIndex;
+            const question = questions[questionIndex];
+            const feedback = document.getElementById(`feedback-${questionIndex}`);
+
+            if (optionIndex === question.correct) {
+                feedback.className = 'feedback show correct-feedback';
+                feedback.textContent = '✓ Correct! Well done.';
+            } else {
+                feedback.className = 'feedback show incorrect-feedback';
+                feedback.textContent = '✗ Incorrect. Try again or move to the next question.';
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                updateQuizDisplay();
+            } else {
+                submitQuiz();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                updateQuizDisplay();
+            }
+        }
+
+        function updateQuizDisplay() {
+            document.querySelectorAll('.question-block').forEach((q, i) => {
+                q.classList.toggle('active', i === currentQuestion);
+            });
+
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.querySelector('.progress-fill').style.width = progress + '%';
+
+            document.getElementById('prev-btn').disabled = currentQuestion === 0;
+            document.getElementById('next-btn').textContent = currentQuestion === questions.length - 1 ? 'Submit' : 'Next →';
+        }
+
+        function submitQuiz() {
+            let totalScore = 0;
+            let compScore = 0, vocabScore = 0, grammarScore = 0, criticalScore = 0, openScore = 0;
+
+            questions.forEach((q, index) => {
+                if (answers[index] === q.correct) {
+                    totalScore++;
+                    if (q.category === 'Comprehension') compScore++;
+                    else if (q.category === 'Vocabulary') vocabScore++;
+                    else if (q.category === 'Grammar') grammarScore++;
+                    else if (q.category === 'Critical Thinking') criticalScore++;
+                    else if (q.category === 'Open-Ended') openScore++;
+                }
+            });
+
+            document.getElementById('quiz-content').style.display = 'none';
+            document.querySelector('.button-group').style.display = 'none';
+            document.getElementById('results-screen').classList.add('show');
+
+            document.getElementById('final-score').textContent = `${totalScore}/15`;
+            document.getElementById('comp-score').textContent = `${compScore}/3`;
+            document.getElementById('vocab-score').textContent = `${vocabScore}/4`;
+            document.getElementById('grammar-score').textContent = `${grammarScore}/5`;
+            document.getElementById('critical-score').textContent = `${criticalScore}/2`;
+            document.getElementById('open-score').textContent = `${openScore}/1`;
+
+            let message = '';
+            if (totalScore >= 13) message = 'Excellent! You've mastered this lesson.';
+            else if (totalScore >= 10) message = 'Great job! You have a solid understanding.';
+            else if (totalScore >= 7) message = 'Good effort! Review the material and try again.';
+            else message = 'Keep practicing! This lesson requires more study.';
+
+            document.getElementById('score-message').textContent = message;
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            answers = new Array(questions.length).fill(null);
+            document.getElementById('quiz-content').style.display = 'block';
+            document.querySelector('.button-group').style.display = 'flex';
+            document.getElementById('results-screen').classList.remove('show');
+            updateQuizDisplay();
+            document.querySelectorAll('input[type="radio"]').forEach(input => input.checked = false);
+            document.querySelectorAll('.feedback').forEach(f => f.classList.remove('show'));
+        }
+
+        // Initialize on load
+        window.addEventListener('load', () => {
+            initializeQuiz();
+            updateQuizDisplay();
+        });
+    </script>
+</body>
+</html>
