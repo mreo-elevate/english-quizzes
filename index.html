@@ -116,6 +116,35 @@
             border: 2px solid #fff;
         }
 
+        .quiz-card.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .quiz-card.locked:hover {
+            background: #fff;
+            color: #000;
+        }
+
+        .quiz-card.locked:hover .cta-button {
+            background: #000;
+            color: #fff;
+            border: none;
+        }
+
+        .lock-badge {
+            display: inline-block;
+            background: #000;
+            color: #fff;
+            padding: 5px 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 10px;
+        }
+
         .footer {
             text-align: center;
             padding-top: 40px;
@@ -153,14 +182,14 @@
         </div>
 
         <div class="quizzes-grid">
-            <a href="cancel-culture.html" class="quiz-card">
+            <div class="quiz-card locked">
                 <div>
                     <h2>Cancel Culture</h2>
                     <p>Explore the paradox of accountability versus mob rule. Advanced conditionals and inversion structures.</p>
                     <div class="meta">Grammar: Inversion & Conditionals</div>
+                    <div class="lock-badge">🔒 Locked</div>
                 </div>
-                <div class="cta-button">Start Quiz →</div>
-            </a>
+            </div>
 
             <a href="tech-mental-health.html" class="quiz-card">
                 <div>
@@ -171,14 +200,14 @@
                 <div class="cta-button">Start Quiz →</div>
             </a>
 
-            <a href="gene-editing.html" class="quiz-card">
+            <div class="quiz-card locked">
                 <div>
                     <h2>Gene Editing Ethics</h2>
                     <p>Debate the ethics of CRISPR and designer babies. Future forms for speculation.</p>
                     <div class="meta">Grammar: Future Forms</div>
+                    <div class="lock-badge">🔒 Locked</div>
                 </div>
-                <div class="cta-button">Start Quiz →</div>
-            </a>
+            </div>
         </div>
 
         <div class="footer">
