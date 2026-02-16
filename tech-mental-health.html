@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technology & Mental Health Quiz - Lesson 2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #fff;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #000;
+            border: 3px solid #fff;
+            padding: 40px;
+            border-radius: 0;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 3px solid #fff;
+            padding-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            color: #ccc;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #333;
+            margin-bottom: 30px;
+            border: 1px solid #666;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #fff;
+            transition: width 0.3s ease;
+        }
+
+        .quiz-section {
+            margin-bottom: 40px;
+            display: none;
+        }
+
+        .quiz-section.active {
+            display: block;
+        }
+
+        .question-number {
+            font-size: 0.9em;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .question-title {
+            font-size: 1.8em;
+            font-weight: 900;
+            margin-bottom: 25px;
+            line-height: 1.3;
+        }
+
+        .question-category {
+            display: inline-block;
+            background: #fff;
+            color: #000;
+            padding: 5px 15px;
+            font-size: 0.85em;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .option {
+            background: #111;
+            border: 2px solid #666;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.05em;
+        }
+
+        .option:hover {
+            border-color: #fff;
+            background: #222;
+        }
+
+        .option input[type="radio"] {
+            margin-right: 15px;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+        }
+
+        .option label {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .option.selected {
+            border-color: #fff;
+            background: #222;
+        }
+
+        .option.correct {
+            border-color: #00ff00;
+            background: #001a00;
+        }
+
+        .option.incorrect {
+            border-color: #ff0000;
+            background: #1a0000;
+        }
+
+        .feedback {
+            background: #111;
+            border-left: 4px solid #999;
+            padding: 20px;
+            margin-top: 20px;
+            font-size: 1em;
+            line-height: 1.6;
+            display: none;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.correct {
+            border-left-color: #00ff00;
+            background: #001a00;
+        }
+
+        .feedback.incorrect {
+            border-left-color: #ff0000;
+            background: #1a0000;
+        }
+
+        .feedback-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            font-size: 0.9em;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            justify-content: space-between;
+        }
+
+        button {
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #000;
+            color: #fff;
+            border: 2px solid #fff;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .results-screen {
+            display: none;
+            text-align: center;
+        }
+
+        .results-screen.show {
+            display: block;
+        }
+
+        .score {
+            font-size: 4em;
+            font-weight: 900;
+            margin: 30px 0;
+            color: #fff;
+        }
+
+        .score.excellent {
+            color: #00ff00;
+        }
+
+        .score.good {
+            color: #ffff00;
+        }
+
+        .score.fair {
+            color: #ff8800;
+        }
+
+        .score.poor {
+            color: #ff0000;
+        }
+
+        .results-message {
+            font-size: 1.5em;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .results-breakdown {
+            background: #111;
+            border: 2px solid #666;
+            padding: 20px;
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #333;
+        }
+
+        .breakdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .restart-btn {
+            background: #fff;
+            color: #000;
+            padding: 15px 40px;
+            font-size: 1.1em;
+        }
+
+        .open-response {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            background: #111;
+            border: 2px solid #666;
+            color: #fff;
+            font-family: inherit;
+            font-size: 1em;
+            resize: vertical;
+        }
+
+        .open-response:focus {
+            outline: none;
+            border-color: #fff;
+            background: #222;
+        }
+
+        .char-count {
+            font-size: 0.9em;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .question-title {
+                font-size: 1.3em;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Technology & Mental Health Quiz</h1>
+            <p>The Impact of Technology on Youth Mental Health</p>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <!-- Question 1: Comprehension -->
+        <div class="quiz-section active" data-question="1">
+            <div class="question-number">Question 1 of 15</div>
+            <div class="question-category">Comprehension</div>
+            <div class="question-title">What is the primary concern about social media use among teenagers?</div>
+            <div class="options">
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q1" value="a">
+                        <span>Social media has no impact on mental health.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q1" value="b">
+                        <span>Excessive use is linked to anxiety, depression, and sleep disruption.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q1" value="c">
+                        <span>Social media only affects adults, not teenagers.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q1" value="d">
+                        <span>Teenagers should use social media more to improve mental health.</span>
+                    </label>
+                </div>
+            </div>
+            <div class="feedback" id="feedback1">
+                <div class="feedback-title">Explanation</div>
+                <p>Research shows that excessive social media use is correlated with increased rates of anxiety, depression, and poor sleep quality in teenagers. The constant comparison and validation-seeking behavior can negatively impact mental well-being.</p>
+            </div>
+        </div>
+
+        <!-- Question 2: Vocabulary -->
+        <div class="quiz-section" data-question="2">
+            <div class="question-number">Question 2 of 15</div>
+            <div class="question-category">Vocabulary</div>
+            <div class="question-title">What does "FOMO" stand for?</div>
+            <div class="options">
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q2" value="a">
+                        <span>Fear of Missing Out—anxiety caused by the belief that others are having more rewarding experiences.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q2" value="b">
+                        <span>A type of social media platform.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q2" value="c">
+                        <span>A medical condition affecting teenagers.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q2" value="d">
+                        <span>A method of improving mental health through technology.</span>
+                    </label>
+                </div>
+            </div>
+            <div class="feedback" id="feedback2">
+                <div class="feedback-title">Explanation</div>
+                <p>FOMO (Fear of Missing Out) is a psychological phenomenon where people experience anxiety about not being included in social events or experiences. Social media amplifies FOMO by constantly showing curated highlights of others' lives.</p>
+            </div>
+        </div>
+
+        <!-- Question 3: Grammar - Passive Voice -->
+        <div class="quiz-section" data-question="3">
+            <div class="question-number">Question 3 of 15</div>
+            <div class="question-category">Grammar: Passive Voice with Reporting Verbs</div>
+            <div class="question-title">Which sentence correctly uses passive voice?</div>
+            <div class="options">
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q3" value="a">
+                        <span>It is estimated that 70% of teenagers experience anxiety related to social media.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q3" value="b">
+                        <span>Teenagers are estimated to experience 70% anxiety related to social media.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q3" value="c">
+                        <span>Estimated it is that teenagers experience anxiety related to social media.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q3" value="d">
+                        <span>70% of teenagers is estimated to experience anxiety related to social media.</span>
+                    </label>
+                </div>
+            </div>
+            <div class="feedback" id="feedback3">
+                <div class="feedback-title">Explanation</div>
+                <p>The correct structure is "It is estimated that + clause." This passive construction with reporting verbs is used in academic writing to present statistics or claims in an objective manner.</p>
+            </div>
+        </div>
+
+        <!-- Question 4: Grammar - Passive Voice -->
+        <div class="quiz-section" data-question="4">
+            <div class="question-number">Question 4 of 15</div>
+            <div class="question-category">Grammar: Passive Voice with Reporting Verbs</div>
+            <div class="question-title">Complete: "Social media is argued to ___"</div>
+            <div class="options">
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q4" value="a">
+                        <span>have negative effects on sleep patterns and self-esteem.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q4" value="b">
+                        <span>being having negative effects on sleep patterns and self-esteem.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q4" value="c">
+                        <span>negatively affect sleep patterns and self-esteem only.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q4" value="d">
+                        <span>be having negative effects on sleep patterns and self-esteem.</span>
+                    </label>
+                </div>
+            </div>
+            <div class="feedback" id="feedback4">
+                <div class="feedback-title">Explanation</div>
+                <p>With "is argued to," use the infinitive form: "have negative effects..." This passive voice structure presents claims or arguments in an academic, distanced manner. The infinitive maintains grammatical correctness.</p>
+            </div>
+        </div>
+
+        <!-- Question 5: Comprehension -->
+        <div class="quiz-section" data-question="5">
+            <div class="question-number">Question 5 of 15</div>
+            <div class="question-category">Comprehension</div>
+            <div class="question-title">How does the "dopamine feedback loop" relate to social media addiction?</div>
+            <div class="options">
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q5" value="a">
+                        <span>It has no connection to social media use.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q5" value="b">
+                        <span>Likes and comments trigger dopamine release, creating a reward cycle that encourages compulsive checking.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q5" value="c">
+                        <span>Dopamine is only relevant to medical conditions, not behavior.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q5" value="d">
+                        <span>Social media decreases dopamine levels in the brain.</span>
+                    </label>
+                </div>
+            </div>
+            <div class="feedback" id="feedback5">
+                <div class="feedback-title">Explanation</div>
+                <p>The dopamine feedback loop is a neurochemical mechanism where social media notifications (likes, comments, shares) trigger dopamine release in the brain. This creates a reward cycle similar to gambling, encouraging compulsive use and potentially leading to addiction.</p>
+            </div>
+        </div>
+
+        <!-- Question 6: Vocabulary -->
+        <div class="quiz-section" data-question="6">
+            <div class="question-number">Question 6 of 15</div>
+            <div class="question-category">Vocabulary</div>
+            <div class="question-title">What does "cyberbullying" mean?</div>
+            <div class="options">
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q6" value="a">
+                        <span>Harassment, intimidation, or abuse conducted through digital platforms and online communication.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q6" value="b">
+                        <span>A type of computer virus or malware.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q6" value="c">
+                        <span>A positive online community interaction.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q6" value="d">
+                        <span>A method of improving digital literacy.</span>
+                    </label>
+                </div>
+            </div>
+            <div class="feedback" id="feedback6">
+                <div class="feedback-title">Explanation</div>
+                <p>Cyberbullying involves using digital platforms to harass, threaten, or humiliate others. Unlike traditional bullying, it can be anonymous, permanent, and reach a wider audience, making it particularly harmful to young people's mental health.</p>
+            </div>
+        </div>
+
+        <!-- Question 7: Grammar - Passive Voice -->
+        <div class="quiz-section" data-question="7">
+            <div class="question-number">Question 7 of 15</div>
+            <div class="question-category">Grammar: Passive Voice with Reporting Verbs</div>
+            <div class="question-title">Which sentence is grammatically correct?</div>
+            <div class="options">
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q7" value="a">
+                        <span>It is reported that excessive screen time disrupts circadian rhythms in adolescents.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q7" value="b">
+                        <span>Excessive screen time is reported to disrupt circadian rhythms in adolescents.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q7" value="c">
+                        <span>Both A and B are correct.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q7" value="d">
+                        <span>Neither A nor B is correct.</span>
+                    </label>
+                </div>
+            </div>
+            <div class="feedback" id="feedback7">
+                <div class="feedback-title">Explanation</div>
+                <p>Both structures are correct. "It is reported that..." and "Excessive screen time is reported to..." are both valid passive voice constructions. They present information in an objective, academic manner.</p>
+            </div>
+        </div>
+
+        <!-- Question 8: Critical Thinking -->
+        <div class="quiz-section" data-question="8">
+            <div class="question-number">Question 8 of 15</div>
+            <div class="question-category">Critical Thinking</div>
+            <div class="question-title">Can technology be both harmful and beneficial for youth mental health?</div>
+            <div class="options">
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q8" value="a">
+                        <span>No, technology is only harmful to mental health.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q8" value="b">
+                        <span>Yes, technology can provide connection and support while also enabling addiction and cyberbullying.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q8" value="c">
+                        <span>No, technology is only beneficial to mental health.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q8" value="d">
+                        <span>Technology has no impact on youth mental health.</span>
+                    </label>
+                </div>
+            </div>
+            <div class="feedback" id="feedback8">
+                <div class="feedback-title">Explanation</div>
+                <p>Technology is a double-edged sword. While it enables connection, support groups, and access to mental health resources, it also facilitates cyberbullying, addiction, sleep disruption, and social comparison. The impact depends on how it's used.</p>
+            </div>
+        </div>
+
+        <!-- Question 9: Vocabulary -->
+        <div class="quiz-section" data-question="9">
+            <div class="question-number">Question 9 of 15</div>
+            <div class="question-category">Vocabulary</div>
+            <div class="question-title">What does "digital detox" mean?</div>
+            <div class="options">
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q9" value="a">
+                        <span>A period of time spent away from digital devices and online platforms to reduce stress and improve mental health.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q9" value="b">
+                        <span>A type of medical treatment for technology addiction.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q9" value="c">
+                        <span>A software program that removes viruses from computers.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q9" value="d">
+                        <span>A method of improving internet speed.</span>
+                    </label>
+                </div>
+            </div>
+            <div class="feedback" id="feedback9">
+                <div class="feedback-title">Explanation</div>
+                <p>A digital detox is a deliberate break from technology use. It can help reset dopamine levels, improve sleep quality, reduce anxiety, and encourage face-to-face social interaction. Many mental health professionals recommend periodic digital detoxes for teenagers.</p>
+            </div>
+        </div>
+
+        <!-- Question 10: Grammar - Passive Voice -->
+        <div class="quiz-section" data-question="10">
+            <div class="question-number">Question 10 of 15</div>
+            <div class="question-category">Grammar: Passive Voice with Reporting Verbs</div>
+            <div class="question-title">Complete: "Teenagers are believed to ___"</div>
+            <div class="options">
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q10" value="a">
+                        <span>spend an average of 7-9 hours per day on digital devices.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q10" value="b">
+                        <span>being spending an average of 7-9 hours per day on digital devices.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q10" value="c">
+                        <span>have spending an average of 7-9 hours per day on digital devices.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q10" value="d">
+                        <span>be spending an average of 7-9 hours per day on digital devices.</span>
+                    </label>
+                </div>
+            </div>
+            <div class="feedback" id="feedback10">
+                <div class="feedback-title">Explanation</div>
+                <p>With "are believed to," use the base infinitive: "spend." This passive voice structure presents beliefs or claims about behavior in an objective manner. The infinitive form is grammatically required after the auxiliary verb.</p>
+            </div>
+        </div>
+
+        <!-- Question 11: Comprehension -->
+        <div class="quiz-section" data-question="11">
+            <div class="question-number">Question 11 of 15</div>
+            <div class="question-category">Comprehension</div>
+            <div class="question-title">What is the relationship between social media and body image issues?</div>
+            <div class="options">
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q11" value="a">
+                        <span>There is no relationship between social media and body image.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q11" value="b">
+                        <span>Exposure to filtered, edited images creates unrealistic beauty standards and increases body dissatisfaction.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q11" value="c">
+                        <span>Social media improves body image in all teenagers.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q11" value="d">
+                        <span>Only girls are affected by social media's impact on body image.</span>
+                    </label>
+                </div>
+            </div>
+            <div class="feedback" id="feedback11">
+                <div class="feedback-title">Explanation</div>
+                <p>Social media's curated, filtered content creates unrealistic beauty standards. Constant exposure to idealized images leads to social comparison, body dissatisfaction, and increased risk of eating disorders and low self-esteem in both boys and girls.</p>
+            </div>
+        </div>
+
+        <!-- Question 12: Vocabulary -->
+        <div class="quiz-section" data-question="12">
+            <div class="question-number">Question 12 of 15</div>
+            <div class="question-category">Vocabulary</div>
+            <div class="question-title">What does "mental health literacy" mean?</div>
+            <div class="options">
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q12" value="a">
+                        <span>The knowledge and understanding of mental health conditions, their signs, and available support resources.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q12" value="b">
+                        <span>The ability to read books about psychology.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q12" value="c">
+                        <span>A type of mental illness.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q12" value="d">
+                        <span>A method of treating depression.</span>
+                    </label>
+                </div>
+            </div>
+            <div class="feedback" id="feedback12">
+                <div class="feedback-title">Explanation</div>
+                <p>Mental health literacy is the knowledge and understanding of mental health conditions, their symptoms, risk factors, and available treatments. Improving mental health literacy among youth can help reduce stigma and encourage help-seeking behavior.</p>
+            </div>
+        </div>
+
+        <!-- Question 13: Grammar - Passive Voice -->
+        <div class="quiz-section" data-question="13">
+            <div class="question-number">Question 13 of 15</div>
+            <div class="question-category">Grammar: Passive Voice with Reporting Verbs</div>
+            <div class="question-title">Which sentence correctly uses passive voice?</div>
+            <div class="options">
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q13" value="a">
+                        <span>It is suggested that parents monitor their children's social media use and establish healthy boundaries.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q13" value="b">
+                        <span>Parents are suggested to monitor their children's social media use and establish healthy boundaries.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q13" value="c">
+                        <span>Suggested it is that parents monitor their children's social media use and establish healthy boundaries.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q13" value="d">
+                        <span>Monitoring is suggested that parents do their children's social media use and establish healthy boundaries.</span>
+                    </label>
+                </div>
+            </div>
+            <div class="feedback" id="feedback13">
+                <div class="feedback-title">Explanation</div>
+                <p>The correct structure is "It is suggested that + clause." This passive construction is used in academic writing to present recommendations or expert advice without directly attributing them to a specific source.</p>
+            </div>
+        </div>
+
+        <!-- Question 14: Critical Thinking -->
+        <div class="quiz-section" data-question="14">
+            <div class="question-number">Question 14 of 15</div>
+            <div class="question-category">Critical Thinking</div>
+            <div class="question-title">What strategies could help teenagers use technology more mindfully?</div>
+            <div class="options">
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q14" value="a">
+                        <span>Teenagers should avoid all technology completely.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q14" value="b">
+                        <span>Setting screen time limits, using app blockers, practicing digital detoxes, and being aware of their emotional responses to social media.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q14" value="c">
+                        <span>There are no effective strategies for mindful technology use.</span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label>
+                        <input type="radio" name="q14" value="d">
+                        <span>Only adults can use technology mindfully, not teenagers.</span>
+                    </label>
+                </div>
+            </div>
+            <div class="feedback" id="feedback14">
+                <div class="feedback-title">Explanation</div>
+                <p>Mindful technology use involves practical strategies like setting daily screen time limits, using app blockers, scheduling device-free times, practicing digital detoxes, and developing awareness of how social media affects emotions. Education and self-awareness are key.</p>
+            </div>
+        </div>
+
+        <!-- Question 15: Open Response -->
+        <div class="quiz-section" data-question="15">
+            <div class="question-number">Question 15 of 15</div>
+            <div class="question-category">Discussion</div>
+            <div class="question-title">How do you think technology has impacted your own mental health, and what strategies could you use to create a healthier relationship with digital devices?</div>
+            <textarea class="open-response" id="q15" placeholder="Write your response here (minimum 50 characters)..."></textarea>
+            <div class="char-count"><span id="charCount">0</span> characters</div>
+            <div class="feedback" id="feedback15">
+                <div class="feedback-title">Reflection</div>
+                <p>There's no single "correct" answer here. Strong responses will reflect on personal experiences, acknowledge both positive and negative impacts of technology, and propose realistic, actionable strategies for creating a healthier digital life.</p>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div class="results-screen" id="resultsScreen">
+            <h2 style="font-size: 2em; margin-bottom: 20px;">Quiz Complete!</h2>
+            <div class="score" id="scoreDisplay"></div>
+            <div class="results-message" id="resultMessage"></div>
+            <div class="results-breakdown">
+                <div class="breakdown-item">
+                    <span>Comprehension Questions</span>
+                    <span id="comprehensionScore">0/3</span>
+                </div>
+                <div class="breakdown-item">
+                    <span>Vocabulary Questions</span>
+                    <span id="vocabularyScore">0/4</span>
+                </div>
+                <div class="breakdown-item">
+                    <span>Grammar Questions</span>
+                    <span id="grammarScore">0/5</span>
+                </div>
+                <div class="breakdown-item">
+                    <span>Critical Thinking Questions</span>
+                    <span id="thinkingScore">0/2</span>
+                </div>
+                <div class="breakdown-item">
+                    <span>Discussion (Open Response)</span>
+                    <span id="discussionScore">Submitted</span>
+                </div>
+            </div>
+            <button class="restart-btn" onclick="location.reload()">Retake Quiz</button>
+        </div>
+
+        <!-- Navigation -->
+        <div class="button-group" id="navigationButtons">
+            <button id="prevBtn" onclick="previousQuestion()" style="visibility: hidden;">← Previous</button>
+            <button id="nextBtn" onclick="nextQuestion()">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 1;
+        const totalQuestions = 15;
+        const correctAnswers = {
+            q1: 'd',
+            q2: 'b',
+            q3: 'c',
+            q4: 'd',
+            q5: 'b',
+            q6: 'a',
+            q7: 'c',
+            q8: 'b',
+            q9: 'd',
+            q10: 'b',
+            q11: 'b',
+            q12: 'c',
+            q13: 'c',
+            q14: 'b',
+            q15: 'open'
+        };
+
+        const categoryScores = {
+            comprehension: { questions: [1, 5, 11], correct: 0 },
+            vocabulary: { questions: [2, 6, 9, 12], correct: 0 },
+            grammar: { questions: [3, 4, 7, 10, 13], correct: 0 },
+            thinking: { questions: [8, 14], correct: 0 },
+            discussion: { questions: [15], correct: 0 }
+        };
+
+        function showQuestion(n) {
+            const sections = document.querySelectorAll('.quiz-section');
+            sections.forEach(section => section.classList.remove('active'));
+            
+            if (n > totalQuestions) n = totalQuestions;
+            if (n < 1) n = 1;
+            
+            currentQuestion = n;
+            
+            document.querySelectorAll('.quiz-section')[n - 1].classList.add('active');
+            
+            // Update progress bar
+            const progress = (n / totalQuestions) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            
+            // Update buttons
+            document.getElementById('prevBtn').style.visibility = n === 1 ? 'hidden' : 'visible';
+            document.getElementById('nextBtn').textContent = n === totalQuestions ? 'Submit Quiz' : 'Next →';
+            
+            // Hide feedbacks
+            document.querySelectorAll('.feedback').forEach(f => f.classList.remove('show'));
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === totalQuestions) {
+                submitQuiz();
+            } else {
+                showQuestion(currentQuestion + 1);
+            }
+        }
+
+        function previousQuestion() {
+            showQuestion(currentQuestion - 1);
+        }
+
+        function submitQuiz() {
+            let score = 0;
+            
+            // Check multiple choice answers
+            for (let i = 1; i <= 14; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if (selected && selected.value === correctAnswers[`q${i}`]) {
+                    score++;
+                    // Update category score
+                    for (let category in categoryScores) {
+                        if (categoryScores[category].questions.includes(i)) {
+                            categoryScores[category].correct++;
+                        }
+                    }
+                }
+            }
+            
+            // Check if open response was filled
+            const openResponse = document.getElementById('q15').value;
+            if (openResponse.length >= 50) {
+                categoryScores.discussion.correct = 1;
+            }
+            
+            // Display results
+            displayResults(score);
+        }
+
+        function displayResults(score) {
+            document.getElementById('navigationButtons').style.display = 'none';
+            document.querySelectorAll('.quiz-section').forEach(s => s.style.display = 'none');
+            document.getElementById('resultsScreen').classList.add('show');
+            
+            const percentage = (score / 14) * 100;
+            document.getElementById('scoreDisplay').textContent = `${score}/14`;
+            
+            let message = '';
+            let scoreClass = '';
+            
+            if (percentage >= 90) {
+                message = 'Excellent! You have a strong understanding of technology\'s impact on youth mental health.';
+                scoreClass = 'excellent';
+            } else if (percentage >= 75) {
+                message = 'Good work! You understand the key concepts, but review some grammar structures and vocabulary.';
+                scoreClass = 'good';
+            } else if (percentage >= 60) {
+                message = 'Fair attempt. Review the lesson materials, especially passive voice structures and vocabulary.';
+                scoreClass = 'fair';
+            } else {
+                message = 'Keep studying. Go back to the lesson and focus on comprehension and grammar structures.';
+                scoreClass = 'poor';
+            }
+            
+            document.getElementById('scoreDisplay').className = scoreClass;
+            document.getElementById('resultMessage').textContent = message;
+            
+            // Update breakdown
+            document.getElementById('comprehensionScore').textContent = `${categoryScores.comprehension.correct}/3`;
+            document.getElementById('vocabularyScore').textContent = `${categoryScores.vocabulary.correct}/4`;
+            document.getElementById('grammarScore').textContent = `${categoryScores.grammar.correct}/5`;
+            document.getElementById('thinkingScore').textContent = `${categoryScores.thinking.correct}/2`;
+        }
+
+        // Character counter for open response
+        document.getElementById('q15').addEventListener('input', function() {
+            document.getElementById('charCount').textContent = this.value.length;
+        });
+
+        // Option selection feedback
+        document.querySelectorAll('.option').forEach(option => {
+            option.addEventListener('click', function() {
+                const input = this.querySelector('input');
+                const questionNum = input.name;
+                const questionIndex = parseInt(questionNum.substring(1));
+                
+                // Remove previous selection
+                document.querySelectorAll(`input[name="${questionNum}"]`).forEach(radio => {
+                    radio.parentElement.parentElement.classList.remove('selected');
+                });
+                
+                // Add selection to clicked option
+                this.classList.add('selected');
+                
+                // Show feedback
+                const feedback = document.getElementById(`feedback${questionIndex}`);
+                feedback.classList.add('show');
+                
+                // Check if answer is correct (for visual feedback)
+                if (input.value === correctAnswers[questionNum]) {
+                    feedback.classList.add('correct');
+                    feedback.classList.remove('incorrect');
+                } else if (questionIndex !== 15) {
+                    feedback.classList.add('incorrect');
+                    feedback.classList.remove('correct');
+                }
+            });
+        });
+
+        // Initialize
+        showQuestion(1);
+    </script>
+</body>
+</html>

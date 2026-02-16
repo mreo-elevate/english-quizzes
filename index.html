@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Quizzes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background: #fff;
+            color: #000;
+            padding: 60px 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 80px;
+            border-bottom: 3px solid #000;
+            padding-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 3.5em;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            color: #666;
+            letter-spacing: 0.5px;
+        }
+
+        .quizzes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .quiz-card {
+            background: #fff;
+            border: 3px solid #000;
+            padding: 40px;
+            text-decoration: none;
+            color: #000;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 300px;
+        }
+
+        .quiz-card:hover {
+            background: #000;
+            color: #fff;
+        }
+
+        .quiz-card h2 {
+            font-size: 1.8em;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .quiz-card p {
+            font-size: 1em;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            flex-grow: 1;
+        }
+
+        .quiz-card .meta {
+            font-size: 0.9em;
+            color: inherit;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: bold;
+        }
+
+        .quiz-card:hover .meta {
+            color: #ccc;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: #000;
+            color: #fff;
+            padding: 12px 30px;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 1px;
+            font-size: 0.9em;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .quiz-card:hover .cta-button {
+            background: #fff;
+            color: #000;
+            border: 2px solid #fff;
+        }
+
+        .footer {
+            text-align: center;
+            padding-top: 40px;
+            border-top: 3px solid #000;
+            font-size: 0.9em;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.2em;
+            }
+
+            .quizzes-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quiz-card {
+                padding: 30px;
+            }
+
+            .quiz-card h2 {
+                font-size: 1.4em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>English Quizzes</h1>
+            <p>Advanced Level | Grammar, Vocabulary & Critical Thinking</p>
+        </div>
+
+        <div class="quizzes-grid">
+            <a href="cancel-culture.html" class="quiz-card">
+                <div>
+                    <h2>Cancel Culture</h2>
+                    <p>Explore the paradox of accountability versus mob rule. Advanced conditionals and inversion structures.</p>
+                    <div class="meta">Grammar: Inversion & Conditionals</div>
+                </div>
+                <div class="cta-button">Start Quiz →</div>
+            </a>
+
+            <a href="tech-mental-health.html" class="quiz-card">
+                <div>
+                    <h2>Technology & Mental Health</h2>
+                    <p>Analyze the impact of social media on youth. Passive voice with reporting verbs.</p>
+                    <div class="meta">Grammar: Passive Voice & Reporting Verbs</div>
+                </div>
+                <div class="cta-button">Start Quiz →</div>
+            </a>
+
+            <a href="gene-editing.html" class="quiz-card">
+                <div>
+                    <h2>Gene Editing Ethics</h2>
+                    <p>Debate the ethics of CRISPR and designer babies. Future forms for speculation.</p>
+                    <div class="meta">Grammar: Future Forms</div>
+                </div>
+                <div class="cta-button">Start Quiz →</div>
+            </a>
+        </div>
+
+        <div class="footer">
+            <p>Advanced English Learning Platform | Minimalista Design</p>
+        </div>
+    </div>
+</body>
+</html>
