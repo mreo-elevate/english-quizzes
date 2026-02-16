@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy, Concerts and Safety - Quiz</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #fff;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .title {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4ff, #0099ff);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .question-container {
+            margin-bottom: 30px;
+        }
+        .question-number {
+            font-size: 14px;
+            color: #00d4ff;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        .question-text {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .option {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+        .option:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #00d4ff;
+        }
+        .option.selected {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: #00d4ff;
+        }
+        .option.correct {
+            background: rgba(0, 255, 0, 0.2);
+            border-color: #00ff00;
+        }
+        .option.incorrect {
+            background: rgba(255, 0, 0, 0.2);
+            border-color: #ff0000;
+        }
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 14px;
+            display: none;
+        }
+        .feedback.show {
+            display: block;
+        }
+        .feedback.correct {
+            background: rgba(0, 255, 0, 0.1);
+            border-left: 4px solid #00ff00;
+        }
+        .feedback.incorrect {
+            background: rgba(255, 0, 0, 0.1);
+            border-left: 4px solid #ff0000;
+        }
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        .btn {
+            flex: 1;
+            padding: 15px;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+        .btn-next {
+            background: linear-gradient(135deg, #00d4ff, #0099ff);
+            color: #000;
+        }
+        .btn-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 212, 255, 0.4);
+        }
+        .btn-next:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .results {
+            display: none;
+            text-align: center;
+        }
+        .results.show {
+            display: block;
+        }
+        .score {
+            font-size: 48px;
+            font-weight: bold;
+            color: #00d4ff;
+            margin: 20px 0;
+        }
+        .score-breakdown {
+            margin: 30px 0;
+            text-align: left;
+        }
+        .score-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            margin: 8px 0;
+            border-radius: 4px;
+        }
+        .restart-btn {
+            background: linear-gradient(135deg, #00ff00, #00aa00);
+            color: #000;
+            margin-top: 20px;
+        }
+        .restart-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 255, 0, 0.4);
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="title">Privacy, Concerts and Safety</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div id="questionCount">Question 1 of 15</div>
+        </div>
+
+        <div id="quizContainer">
+            <div class="question-container" id="questionContainer"></div>
+            <div class="button-group">
+                <button class="btn btn-next" id="nextBtn" onclick="nextQuestion()" disabled>Next Question</button>
+            </div>
+        </div>
+
+        <div class="results" id="results">
+            <h2>Quiz Complete!</h2>
+            <div class="score" id="finalScore"></div>
+            <div class="score-breakdown" id="scoreBreakdown"></div>
+            <button class="btn restart-btn" onclick="restartQuiz()">Restart Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                category: "Comprehension",
+                question: "What is the main concern about facial recognition at concert venues?",
+                options: [
+                    "It improves ticket sales",
+                    "It collects biometric data without explicit consent",
+                    "It reduces security costs",
+                    "It makes concerts more enjoyable"
+                ],
+                correct: 1
+            },
+            {
+                category: "Comprehension",
+                question: "According to the lesson, where does facial recognition data often come from?",
+                options: [
+                    "Government databases only",
+                    "Social media platforms without consent",
+                    "Concert ticket purchases",
+                    "Passport applications"
+                ],
+                correct: 1
+            },
+            {
+                category: "Comprehension",
+                question: "What does the lesson suggest about data transparency at venues?",
+                options: [
+                    "It is always clear and transparent",
+                    "It is often unclear who owns the data or how long it's kept",
+                    "Venues always delete data immediately",
+                    "There is no data collection at all"
+                ],
+                correct: 1
+            },
+            {
+                category: "Vocabulary",
+                question: "What does 'surveillance' mean in this context?",
+                options: [
+                    "Selling tickets online",
+                    "Close observation, especially of suspected individuals",
+                    "Entertainment at concerts",
+                    "Security guards at entrances"
+                ],
+                correct: 1
+            },
+            {
+                category: "Vocabulary",
+                question: "Which word means 'a temporary prohibition of an activity'?",
+                options: [
+                    "Algorithm",
+                    "Consent",
+                    "Moratorium",
+                    "Anonymity"
+                ],
+                correct: 2
+            },
+            {
+                category: "Vocabulary",
+                question: "What is 'consent' in the context of data collection?",
+                options: [
+                    "A type of concert ticket",
+                    "Permission for something to happen or agreement to do something",
+                    "A security protocol",
+                    "A facial recognition system"
+                ],
+                correct: 1
+            },
+            {
+                category: "Vocabulary",
+                question: "An 'algorithm' is best defined as:",
+                options: [
+                    "A type of concert venue",
+                    "A process or set of rules for calculations or problem-solving",
+                    "A facial recognition camera",
+                    "A security clearance"
+                ],
+                correct: 1
+            },
+            {
+                category: "Grammar",
+                question: "Complete: 'IT IS YOUR SAFETY THAT...'",
+                options: [
+                    "...they ignore completely.",
+                    "...they claim to protect.",
+                    "...is not important.",
+                    "...nobody cares about."
+                ],
+                correct: 1
+            },
+            {
+                category: "Grammar",
+                question: "Which sentence uses a cleft structure correctly?",
+                options: [
+                    "They want your data.",
+                    "WHAT they really want IS your biometric data.",
+                    "Your data is wanted by them.",
+                    "The data that they want is yours."
+                ],
+                correct: 1
+            },
+            {
+                category: "Grammar",
+                question: "Complete: 'IT WAS AT THE CONCERT ENTRANCE WHERE...'",
+                options: [
+                    "...people bought tickets.",
+                    "...the scanning occurred.",
+                    "...security was relaxed.",
+                    "...music was loudest."
+                ],
+                correct: 1
+            },
+            {
+                category: "Grammar",
+                question: "Which cleft sentence emphasizes the problem?",
+                options: [
+                    "The lack of consent is a problem.",
+                    "IT IS THE LACK OF CONSENT THAT concerns activists.",
+                    "Activists are concerned about consent.",
+                    "Consent is lacking."
+                ],
+                correct: 1
+            },
+            {
+                category: "Grammar",
+                question: "Complete: 'WHAT HAPPENS TO YOUR DATA...'",
+                options: [
+                    "...is always transparent.",
+                    "...is often a mystery.",
+                    "...is deleted immediately.",
+                    "...is protected by law."
+                ],
+                correct: 1
+            },
+            {
+                category: "Critical Thinking",
+                question: "What is the 'surveillance paradox' mentioned in the lesson?",
+                options: [
+                    "Surveillance makes concerts cheaper",
+                    "Trading privacy for security, but neither is guaranteed",
+                    "Surveillance improves music quality",
+                    "Concerts are safer without technology"
+                ],
+                correct: 1
+            },
+            {
+                category: "Critical Thinking",
+                question: "Who bears responsibility for protecting personal data at venues?",
+                options: [
+                    "Only the government",
+                    "Only concert-goers",
+                    "Venues, governments, and individuals share responsibility",
+                    "Nobody is responsible"
+                ],
+                correct: 2
+            },
+            {
+                category: "Open-Ended",
+                question: "In your opinion, should artists ban surveillance at their own shows?",
+                options: [
+                    "Yes, always",
+                    "No, never",
+                    "It depends on the context and artist's choice",
+                    "This is a personal decision with valid arguments on both sides"
+                ],
+                correct: 3
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = [];
+        let scores = { "Comprehension": 0, "Vocabulary": 0, "Grammar": 0, "Critical Thinking": 0, "Open-Ended": 0 };
+        let totalByCategory = { "Comprehension": 0, "Vocabulary": 0, "Grammar": 0, "Critical Thinking": 0, "Open-Ended": 0 };
+
+        // Initialize category counts
+        quizData.forEach(q => totalByCategory[q.category]++);
+
+        function displayQuestion() {
+            const question = quizData[currentQuestion];
+            const container = document.getElementById('questionContainer');
+            
+            let html = `
+                <div class="question-number">Question ${currentQuestion + 1} of ${quizData.length} - ${question.category}</div>
+                <div class="question-text">${question.question}</div>
+                <div class="options">
+            `;
+            
+            question.options.forEach((option, index) => {
+                const isAnswered = answers[currentQuestion] !== undefined;
+                const isSelected = answers[currentQuestion] === index;
+                const isCorrect = index === question.correct;
+                
+                let className = 'option';
+                if (isAnswered) {
+                    if (isSelected && isCorrect) className += ' correct';
+                    else if (isSelected && !isCorrect) className += ' incorrect';
+                    else if (!isSelected && isCorrect) className += ' correct';
+                }
+                if (isSelected && !isAnswered) className += ' selected';
+                
+                html += `<div class="${className}" onclick="selectAnswer(${index})">${String.fromCharCode(65 + index)}. ${option}</div>`;
+            });
+            
+            html += '</div>';
+            
+            if (answers[currentQuestion] !== undefined) {
+                const isCorrect = answers[currentQuestion] === question.correct;
+                html += `<div class="feedback show ${isCorrect ? 'correct' : 'incorrect'}">
+                    ${isCorrect ? '✓ Correct!' : '✗ Incorrect. The correct answer is: ' + String.fromCharCode(65 + question.correct) + '. ' + question.options[question.correct]}
+                </div>`;
+            }
+            
+            container.innerHTML = html;
+            
+            document.getElementById('questionCount').textContent = `Question ${currentQuestion + 1} of ${quizData.length}`;
+            document.getElementById('progressFill').style.width = ((currentQuestion + 1) / quizData.length * 100) + '%';
+            document.getElementById('nextBtn').disabled = answers[currentQuestion] === undefined;
+        }
+
+        function selectAnswer(index) {
+            if (answers[currentQuestion] === undefined) {
+                answers[currentQuestion] = index;
+                const question = quizData[currentQuestion];
+                if (index === question.correct) {
+                    scores[question.category]++;
+                }
+                displayQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < quizData.length - 1) {
+                currentQuestion++;
+                displayQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quizContainer').style.display = 'none';
+            document.getElementById('results').classList.add('show');
+            
+            const totalCorrect = Object.values(scores).reduce((a, b) => a + b, 0);
+            const percentage = Math.round((totalCorrect / quizData.length) * 100);
+            
+            document.getElementById('finalScore').textContent = `${totalCorrect} / ${quizData.length} (${percentage}%)`;
+            
+            let breakdown = '';
+            Object.keys(scores).forEach(category => {
+                breakdown += `<div class="score-item"><span>${category}</span><span>${scores[category]} / ${totalByCategory[category]}</span></div>`;
+            });
+            document.getElementById('scoreBreakdown').innerHTML = breakdown;
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            answers = [];
+            scores = { "Comprehension": 0, "Vocabulary": 0, "Grammar": 0, "Critical Thinking": 0, "Open-Ended": 0 };
+            document.getElementById('quizContainer').style.display = 'block';
+            document.getElementById('results').classList.remove('show');
+            displayQuestion();
+        }
+
+        // Initialize
+        displayQuestion();
+    </script>
+</body>
+</html>
