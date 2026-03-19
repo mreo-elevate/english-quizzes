@@ -19,10 +19,9 @@
         .question-title { font-size: 1.8em; font-weight: 900; margin-bottom: 25px; line-height: 1.3; }
         .question-category { display: inline-block; background: #fff; color: #000; padding: 5px 15px; font-size: 0.85em; font-weight: bold; text-transform: uppercase; margin-bottom: 15px; letter-spacing: 1px; }
         .options { display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px; }
-        .option { background: #111; border: 2px solid #666; padding: 15px 20px; cursor: pointer; transition: all 0.3s ease; font-size: 1.05em; }
+        .option { background: #111; border: 2px solid #666; padding: 15px 20px; cursor: pointer; transition: all 0.3s ease; font-size: 1.05em; display: flex; align-items: center; }
         .option:hover { border-color: #fff; background: #222; }
         .option input[type="radio"] { margin-right: 15px; cursor: pointer; width: 18px; height: 18px; }
-        .option label { cursor: pointer; display: flex; align-items: center; width: 100%; }
         .option.selected { border-color: #fff; background: #222; }
         .button-group { display: flex; gap: 15px; margin-top: 30px; justify-content: space-between; }
         button { background: #fff; color: #000; border: none; padding: 12px 30px; font-size: 1em; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease; }
@@ -39,8 +38,8 @@
         .breakdown-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #333; }
         .breakdown-item:last-child { border-bottom: none; }
         .restart-btn { background: #fff; color: #000; padding: 15px 40px; font-size: 1.1em; }
-        .open-response { width: 100%; min-height: 120px; padding: 15px; background: #111; border: 2px solid #666; color: #fff; font-family: inherit; font-size: 1em; resize: vertical; }
-        .open-response:focus { outline: none; border-color: #fff; background: #222; }
+        textarea { width: 100%; min-height: 120px; padding: 15px; background: #111; border: 2px solid #666; color: #fff; font-family: inherit; font-size: 1em; resize: vertical; }
+        textarea:focus { outline: none; border-color: #fff; background: #222; }
     </style>
 </head>
 <body>
@@ -53,37 +52,33 @@
             </div>
         </div>
 
-        <div id="quiz-container"></div>
+        <div id="quiz-content"></div>
 
         <div class="button-group">
-            <button id="prev-btn" onclick="previousQuestion()">← PREVIOUS</button>
-            <button id="next-btn" onclick="nextQuestion()">NEXT →</button>
+            <button onclick="prevQuestion()">← PREVIOUS</button>
+            <button onclick="nextQuestion()">NEXT →</button>
         </div>
 
-        <div id="results-screen" class="results-screen">
+        <div id="results" class="results-screen">
             <h2 style="font-size: 2em; margin-bottom: 20px;">QUIZ COMPLETE!</h2>
-            <div class="score" id="final-score">0/15</div>
-            <div class="results-message" id="results-message"></div>
+            <div class="score" id="score-display">0/14</div>
+            <div class="results-message" id="message-display"></div>
             <div class="results-breakdown">
                 <div class="breakdown-item">
                     <span>Comprehension:</span>
-                    <span id="comp-score">0/3</span>
+                    <span id="comp-display">0/3</span>
                 </div>
                 <div class="breakdown-item">
                     <span>Vocabulary:</span>
-                    <span id="vocab-score">0/4</span>
+                    <span id="vocab-display">0/4</span>
                 </div>
                 <div class="breakdown-item">
                     <span>Grammar:</span>
-                    <span id="grammar-score">0/5</span>
+                    <span id="grammar-display">0/5</span>
                 </div>
                 <div class="breakdown-item">
                     <span>Critical Thinking:</span>
-                    <span id="critical-score">0/2</span>
-                </div>
-                <div class="breakdown-item">
-                    <span>Open Response:</span>
-                    <span id="open-score">0/1</span>
+                    <span id="critical-display">0/2</span>
                 </div>
             </div>
             <button class="restart-btn" onclick="restartQuiz()">RESTART QUIZ</button>
@@ -91,321 +86,119 @@
     </div>
 
     <script>
-        const quizData = [
-            {
-                category: "Comprehension",
-                question: "According to the lesson, what is the main difference between digital connection and true intimacy?",
-                options: [
-                    "Digital connection is faster but less meaningful",
-                    "Digital connection lacks vulnerability, authenticity, and physical presence",
-                    "Digital connection is more reliable",
-                    "Digital connection is more expensive"
-                ],
-                correct: 1
-            },
-            {
-                category: "Comprehension",
-                question: "What does Stanford psychologist Jamil Zaki identify as a crucial barrier to genuine connection?",
-                options: [
-                    "Lack of technology",
-                    "Cynicism about human nature",
-                    "Too much free time",
-                    "Poor communication skills"
-                ],
-                correct: 1
-            },
-            {
-                category: "Comprehension",
-                question: "How does the lesson suggest we can combat loneliness?",
-                options: [
-                    "By spending more time on social media",
-                    "By avoiding human interaction",
-                    "By cultivating genuine, vulnerable connections with others",
-                    "By moving to a bigger city"
-                ],
-                correct: 2
-            },
-            {
-                category: "Vocabulary",
-                question: "Which word best completes: 'The _____ of modern life often leads people to feel isolated despite constant digital connection.'",
-                options: [
-                    "fragmentation",
-                    "celebration",
-                    "acceleration",
-                    "documentation"
-                ],
-                correct: 0
-            },
-            {
-                category: "Vocabulary",
-                question: "What does 'vulnerability' mean in the context of building genuine relationships?",
-                options: [
-                    "Being weak or defenseless",
-                    "Being open and honest about one's feelings and fears",
-                    "Being easily hurt or damaged",
-                    "Being unprepared for challenges"
-                ],
-                correct: 1
-            },
-            {
-                category: "Vocabulary",
-                question: "The word 'epidemic' in 'loneliness epidemic' refers to:",
-                options: [
-                    "A disease that spreads rapidly",
-                    "A widespread occurrence of something undesirable",
-                    "A medical condition",
-                    "A temporary trend"
-                ],
-                correct: 1
-            },
-            {
-                category: "Vocabulary",
-                question: "Which term describes the feeling of being disconnected from others despite being surrounded by people?",
-                options: [
-                    "Solitude",
-                    "Isolation",
-                    "Alienation",
-                    "Seclusion"
-                ],
-                correct: 2
-            },
-            {
-                category: "Grammar",
-                question: "Choose the correct sentence:",
-                options: [
-                    "If we would invest more time in genuine relationships, we will feel less lonely.",
-                    "If we invested more time in genuine relationships, we would feel less lonely.",
-                    "If we invest more time in genuine relationships, we felt less lonely.",
-                    "If we would have invested more time in genuine relationships, we will feel less lonely."
-                ],
-                correct: 1
-            },
-            {
-                category: "Grammar",
-                question: "Which sentence uses the correct conditional structure?",
-                options: [
-                    "Were people to prioritize face-to-face interactions, loneliness would decrease.",
-                    "If people would prioritize face-to-face interactions, loneliness would decrease.",
-                    "People to prioritize face-to-face interactions, loneliness would decrease.",
-                    "If people prioritize face-to-face interactions, loneliness would decreases."
-                ],
-                correct: 0
-            },
-            {
-                category: "Grammar",
-                question: "Identify the sentence with correct use of reported speech:",
-                options: [
-                    "The psychologist said that genuine connection is more important than digital followers.",
-                    "The psychologist said that genuine connection was more important than digital followers.",
-                    "The psychologist says that genuine connection is more important than digital followers.",
-                    "The psychologist said genuine connection is more important than digital followers."
-                ],
-                correct: 1
-            },
-            {
-                category: "Grammar",
-                question: "Which sentence correctly uses the passive voice?",
-                options: [
-                    "Loneliness has been considered a major public health issue by researchers.",
-                    "Researchers have been considered loneliness a major public health issue.",
-                    "Loneliness has considered a major public health issue by researchers.",
-                    "Researchers have loneliness been considered a major public health issue."
-                ],
-                correct: 0
-            },
-            {
-                category: "Critical Thinking",
-                question: "Based on the lesson, what can we infer about the relationship between technology and loneliness?",
-                options: [
-                    "Technology is the sole cause of loneliness",
-                    "Technology itself is not the problem; how we use it determines its impact on our connections",
-                    "Technology has no effect on loneliness",
-                    "Loneliness only existed before the internet"
-                ],
-                correct: 1
-            },
-            {
-                category: "Critical Thinking",
-                question: "Why might someone feel lonely despite having thousands of social media followers?",
-                options: [
-                    "Social media followers are not the same as genuine, vulnerable relationships",
-                    "People with many followers are naturally lonely",
-                    "Social media makes everyone lonely",
-                    "Followers prevent real connections from forming"
-                ],
-                correct: 0
-            },
-            {
-                category: "Open Response",
-                question: "Describe one specific way you could cultivate a more genuine connection with someone in your life. How would vulnerability play a role?",
-                options: [],
-                correct: -1,
-                isOpenEnded: true
-            }
-        ];
+var questions = [
+    { cat: "Comprehension", q: "According to the lesson, what is the main difference between digital connection and true intimacy?", opts: ["Digital connection is faster but less meaningful", "Digital connection lacks vulnerability, authenticity, and physical presence", "Digital connection is more reliable", "Digital connection is more expensive"], ans: 1 },
+    { cat: "Comprehension", q: "What does Stanford psychologist Jamil Zaki identify as a crucial barrier to genuine connection?", opts: ["Lack of technology", "Cynicism about human nature", "Too much free time", "Poor communication skills"], ans: 1 },
+    { cat: "Comprehension", q: "How does the lesson suggest we can combat loneliness?", opts: ["By spending more time on social media", "By avoiding human interaction", "By cultivating genuine, vulnerable connections with others", "By moving to a bigger city"], ans: 2 },
+    { cat: "Vocabulary", q: "Which word best completes: 'The _____ of modern life often leads people to feel isolated despite constant digital connection.'", opts: ["fragmentation", "celebration", "acceleration", "documentation"], ans: 0 },
+    { cat: "Vocabulary", q: "What does 'vulnerability' mean in the context of building genuine relationships?", opts: ["Being weak or defenseless", "Being open and honest about one's feelings and fears", "Being easily hurt or damaged", "Being unprepared for challenges"], ans: 1 },
+    { cat: "Vocabulary", q: "The word 'epidemic' in 'loneliness epidemic' refers to:", opts: ["A disease that spreads rapidly", "A widespread occurrence of something undesirable", "A medical condition", "A temporary trend"], ans: 1 },
+    { cat: "Vocabulary", q: "Which term describes the feeling of being disconnected from others despite being surrounded by people?", opts: ["Solitude", "Isolation", "Alienation", "Seclusion"], ans: 2 },
+    { cat: "Grammar", q: "Choose the correct sentence:", opts: ["If we would invest more time in genuine relationships, we will feel less lonely.", "If we invested more time in genuine relationships, we would feel less lonely.", "If we invest more time in genuine relationships, we felt less lonely.", "If we would have invested more time in genuine relationships, we will feel less lonely."], ans: 1 },
+    { cat: "Grammar", q: "Which sentence uses the correct conditional structure?", opts: ["Were people to prioritize face-to-face interactions, loneliness would decrease.", "If people would prioritize face-to-face interactions, loneliness would decrease.", "People to prioritize face-to-face interactions, loneliness would decrease.", "If people prioritize face-to-face interactions, loneliness would decreases."], ans: 0 },
+    { cat: "Grammar", q: "Identify the sentence with correct use of reported speech:", opts: ["The psychologist said that genuine connection is more important than digital followers.", "The psychologist said that genuine connection was more important than digital followers.", "The psychologist says that genuine connection is more important than digital followers.", "The psychologist said genuine connection is more important than digital followers."], ans: 1 },
+    { cat: "Grammar", q: "Which sentence correctly uses the passive voice?", opts: ["Loneliness has been considered a major public health issue by researchers.", "Researchers have been considered loneliness a major public health issue.", "Loneliness has considered a major public health issue by researchers.", "Researchers have loneliness been considered a major public health issue."], ans: 0 },
+    { cat: "Critical Thinking", q: "Based on the lesson, what can we infer about the relationship between technology and loneliness?", opts: ["Technology is the sole cause of loneliness", "Technology itself is not the problem; how we use it determines its impact on our connections", "Technology has no effect on loneliness", "Loneliness only existed before the internet"], ans: 1 },
+    { cat: "Critical Thinking", q: "Why might someone feel lonely despite having thousands of social media followers?", opts: ["Social media followers are not the same as genuine, vulnerable relationships", "People with many followers are naturally lonely", "Social media makes everyone lonely", "Followers prevent real connections from forming"], ans: 0 }
+];
 
-        let currentQuestion = 0;
-        let userAnswers = new Array(quizData.length).fill(null);
+var current = 0;
+var answers = [];
 
-        function init() {
-            renderQuestion();
-            updateProgress();
+function renderQ() {
+    var q = questions[current];
+    var html = '<div class="quiz-section active"><div class="question-category">' + q.cat + '</div>';
+    html += '<div class="question-number">Question ' + (current + 1) + ' of ' + questions.length + '</div>';
+    html += '<div class="question-title">' + q.q + '</div><div class="options">';
+    
+    for (var i = 0; i < q.opts.length; i++) {
+        var checked = answers[current] === i ? 'checked' : '';
+        var selected = answers[current] === i ? 'selected' : '';
+        html += '<label class="option ' + selected + '"><input type="radio" name="ans" value="' + i + '" ' + checked + ' onchange="setAns(' + i + ')"> ' + q.opts[i] + '</label>';
+    }
+    
+    html += '</div></div>';
+    document.getElementById('quiz-content').innerHTML = html;
+    updateProgress();
+}
+
+function setAns(idx) {
+    answers[current] = idx;
+    renderQ();
+}
+
+function nextQuestion() {
+    if (current < questions.length - 1) {
+        current++;
+        renderQ();
+    } else {
+        showResults();
+    }
+}
+
+function prevQuestion() {
+    if (current > 0) {
+        current--;
+        renderQ();
+    }
+}
+
+function updateProgress() {
+    var pct = ((current + 1) / questions.length) * 100;
+    document.querySelector('.progress-fill').style.width = pct + '%';
+}
+
+function showResults() {
+    var comp = 0, vocab = 0, grammar = 0, critical = 0, total = 0;
+    
+    for (var i = 0; i < questions.length; i++) {
+        if (answers[i] === questions[i].ans) {
+            total++;
+            if (questions[i].cat === 'Comprehension') comp++;
+            else if (questions[i].cat === 'Vocabulary') vocab++;
+            else if (questions[i].cat === 'Grammar') grammar++;
+            else if (questions[i].cat === 'Critical Thinking') critical++;
         }
+    }
+    
+    var scoreClass = 'poor';
+    var msg = 'Keep practicing! This lesson requires more study.';
+    if (total >= 12) {
+        scoreClass = 'excellent';
+        msg = 'Excellent! You have mastered this lesson.';
+    } else if (total >= 10) {
+        scoreClass = 'good';
+        msg = 'Great job! You have a solid understanding.';
+    } else if (total >= 7) {
+        scoreClass = 'fair';
+        msg = 'Good effort! Review the material and try again.';
+    }
+    
+    document.getElementById('score-display').textContent = total + '/' + questions.length;
+    document.getElementById('score-display').className = 'score ' + scoreClass;
+    document.getElementById('message-display').textContent = msg;
+    document.getElementById('comp-display').textContent = comp + '/3';
+    document.getElementById('vocab-display').textContent = vocab + '/4';
+    document.getElementById('grammar-display').textContent = grammar + '/5';
+    document.getElementById('critical-display').textContent = critical + '/2';
+    
+    document.getElementById('quiz-content').style.display = 'none';
+    document.querySelector('.button-group').style.display = 'none';
+    document.getElementById('results').classList.add('show');
+}
 
-        function renderQuestion() {
-            const container = document.getElementById('quiz-container');
-            container.innerHTML = '';
+function restartQuiz() {
+    current = 0;
+    answers = [];
+    document.getElementById('quiz-content').style.display = 'block';
+    document.querySelector('.button-group').style.display = 'flex';
+    document.getElementById('results').classList.remove('show');
+    renderQ();
+}
 
-            const q = quizData[currentQuestion];
-            const section = document.createElement('div');
-            section.className = 'quiz-section active';
-
-            let html = '<div class="question-category">' + q.category + '</div>';
-            html += '<div class="question-number">Question ' + (currentQuestion + 1) + ' of ' + quizData.length + '</div>';
-            html += '<div class="question-title">' + q.question + '</div>';
-
-            if (q.isOpenEnded) {
-                html += '<textarea class="open-response" id="open-answer" placeholder="Type your response here..."></textarea>';
-                if (userAnswers[currentQuestion] !== null) {
-                    setTimeout(function() {
-                        var elem = document.getElementById('open-answer');
-                        if (elem) elem.value = userAnswers[currentQuestion];
-                    }, 0);
-                }
-            } else {
-                html += '<div class="options">';
-                for (var i = 0; i < q.options.length; i++) {
-                    var isSelected = userAnswers[currentQuestion] === i;
-                    html += '<div class="option ' + (isSelected ? 'selected' : '') + '">';
-                    html += '<label>';
-                    html += '<input type="radio" name="answer" value="' + i + '" ' + (isSelected ? 'checked' : '') + ' onchange="selectAnswer(' + i + ')">';
-                    html += '<span>' + q.options[i] + '</span>';
-                    html += '</label>';
-                    html += '</div>';
-                }
-                html += '</div>';
-            }
-
-            section.innerHTML = html;
-            container.appendChild(section);
-        }
-
-        function selectAnswer(index) {
-            userAnswers[currentQuestion] = index;
-            var options = document.querySelectorAll('.option');
-            for (var i = 0; i < options.length; i++) {
-                if (i === index) {
-                    options[i].classList.add('selected');
-                } else {
-                    options[i].classList.remove('selected');
-                }
-            }
-        }
-
-        function nextQuestion() {
-            if (currentQuestion < quizData.length - 1) {
-                if (quizData[currentQuestion].isOpenEnded) {
-                    var textarea = document.getElementById('open-answer');
-                    if (textarea) userAnswers[currentQuestion] = textarea.value;
-                }
-                currentQuestion++;
-                renderQuestion();
-                updateProgress();
-            } else {
-                submitQuiz();
-            }
-        }
-
-        function previousQuestion() {
-            if (currentQuestion > 0) {
-                if (quizData[currentQuestion].isOpenEnded) {
-                    var textarea = document.getElementById('open-answer');
-                    if (textarea) userAnswers[currentQuestion] = textarea.value;
-                }
-                currentQuestion--;
-                renderQuestion();
-                updateProgress();
-            }
-        }
-
-        function updateProgress() {
-            var progress = ((currentQuestion + 1) / quizData.length) * 100;
-            document.querySelector('.progress-fill').style.width = progress + '%';
-        }
-
-        function submitQuiz() {
-            if (quizData[currentQuestion].isOpenEnded) {
-                var textarea = document.getElementById('open-answer');
-                if (textarea) userAnswers[currentQuestion] = textarea.value;
-            }
-
-            calculateScore();
-            showResults();
-        }
-
-        function calculateScore() {
-            var compScore = 0, vocabScore = 0, grammarScore = 0, criticalScore = 0, openScore = 0;
-            var totalScore = 0;
-
-            for (var i = 0; i < quizData.length; i++) {
-                var q = quizData[i];
-                if (q.isOpenEnded) {
-                    if (userAnswers[i] && userAnswers[i].trim().length > 20) {
-                        openScore = 1;
-                        totalScore++;
-                    }
-                } else if (userAnswers[i] === q.correct) {
-                    totalScore++;
-                    if (q.category === 'Comprehension') compScore++;
-                    else if (q.category === 'Vocabulary') vocabScore++;
-                    else if (q.category === 'Grammar') grammarScore++;
-                    else if (q.category === 'Critical Thinking') criticalScore++;
-                }
-            }
-
-            document.getElementById('final-score').textContent = totalScore + '/' + quizData.length;
-            document.getElementById('comp-score').textContent = compScore + '/3';
-            document.getElementById('vocab-score').textContent = vocabScore + '/4';
-            document.getElementById('grammar-score').textContent = grammarScore + '/5';
-            document.getElementById('critical-score').textContent = criticalScore + '/2';
-            document.getElementById('open-score').textContent = openScore + '/1';
-
-            var scoreClass = 'poor';
-            var message = 'Keep practicing! This lesson requires more study.';
-            if (totalScore >= 13) {
-                scoreClass = 'excellent';
-                message = 'Excellent! You have mastered this lesson.';
-            } else if (totalScore >= 10) {
-                scoreClass = 'good';
-                message = 'Great job! You have a solid understanding.';
-            } else if (totalScore >= 7) {
-                scoreClass = 'fair';
-                message = 'Good effort! Review the material and try again.';
-            }
-
-            document.getElementById('final-score').className = 'score ' + scoreClass;
-            document.getElementById('results-message').textContent = message;
-        }
-
-        function showResults() {
-            document.getElementById('quiz-container').style.display = 'none';
-            document.querySelector('.button-group').style.display = 'none';
-            document.getElementById('results-screen').classList.add('show');
-        }
-
-        function restartQuiz() {
-            currentQuestion = 0;
-            userAnswers = new Array(quizData.length).fill(null);
-            document.getElementById('quiz-container').style.display = 'block';
-            document.querySelector('.button-group').style.display = 'flex';
-            document.getElementById('results-screen').classList.remove('show');
-            renderQuestion();
-            updateProgress();
-        }
-
-        window.addEventListener('load', function() {
-            init();
-        });
+window.onload = function() {
+    renderQ();
+};
     </script>
 </body>
 </html>
