@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mental Health & Self-Care Quiz</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; }
+        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+        .quiz-header { background: #2c3e50; color: white; padding: 30px; border-radius: 8px; margin-bottom: 30px; text-align: center; }
+        .quiz-header h1 { font-size: 32px; margin-bottom: 10px; }
+        .quiz-header p { font-size: 16px; opacity: 0.9; }
+        .question-container { background: white; padding: 25px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: none; }
+        .question-container.active { display: block; }
+        .question-text { font-size: 18px; font-weight: bold; margin-bottom: 20px; color: #2c3e50; }
+        .options { display: flex; flex-direction: column; gap: 12px; }
+        .option { padding: 12px 15px; border: 2px solid #ddd; border-radius: 6px; cursor: pointer; transition: all 0.3s; }
+        .option:hover { background: #ecf0f1; border-color: #3498db; }
+        .option input[type="radio"] { margin-right: 10px; }
+        .option label { cursor: pointer; display: flex; align-items: center; width: 100%; }
+        .navigation { display: flex; justify-content: space-between; gap: 10px; margin-top: 20px; }
+        button { padding: 12px 24px; font-size: 16px; border: none; border-radius: 6px; cursor: pointer; transition: all 0.3s; }
+        .btn-prev, .btn-next { background: #3498db; color: white; }
+        .btn-prev:hover, .btn-next:hover { background: #2980b9; }
+        .btn-prev:disabled, .btn-next:disabled { background: #bdc3c7; cursor: not-allowed; }
+        .btn-submit { background: #27ae60; color: white; width: 100%; }
+        .btn-submit:hover { background: #229954; }
+        .progress { background: #ecf0f1; height: 8px; border-radius: 4px; margin-bottom: 20px; overflow: hidden; }
+        .progress-bar { background: #3498db; height: 100%; transition: width 0.3s; }
+        .results { background: #ecf0f1; padding: 30px; border-radius: 8px; text-align: center; display: none; }
+        .results.show { display: block; }
+        .results h2 { font-size: 28px; color: #2c3e50; margin-bottom: 20px; }
+        .score { font-size: 48px; font-weight: bold; color: #27ae60; margin-bottom: 20px; }
+        .category-score { background: white; padding: 15px; margin: 10px 0; border-radius: 6px; }
+        .category-score h3 { color: #2c3e50; margin-bottom: 5px; }
+        .category-score p { font-size: 14px; color: #7f8c8d; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="quiz-header">
+            <h1>MENTAL HEALTH & SELF-CARE</h1>
+            <p>Test your understanding of wellness, resilience, and healthy coping strategies</p>
+        </div>
+
+        <div class="progress">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div id="quizContainer"></div>
+
+        <div class="results" id="results">
+            <h2>Quiz Complete!</h2>
+            <div class="score" id="finalScore"></div>
+            <div id="categoryScores"></div>
+            <button onclick="location.reload()" style="margin-top: 20px; background: #3498db; color: white; padding: 12px 24px; border-radius: 6px; border: none; cursor: pointer;">Retake Quiz</button>
+        </div>
+
+        <div class="navigation" id="navigation" style="display: none;">
+            <button class="btn-prev" onclick="previousQuestion()">PREVIOUS</button>
+            <button class="btn-next" onclick="nextQuestion()">NEXT</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                type: 'comprehension',
+                text: 'What is the primary difference between self-care and escapism?',
+                options: [
+                    'Self-care builds a sustainable life; escapism temporarily avoids problems',
+                    'Self-care is expensive; escapism is free',
+                    'Self-care is only for weekends; escapism is daily',
+                    'There is no difference between them'
+                ],
+                correct: 0
+            },
+            {
+                type: 'comprehension',
+                text: 'According to the lesson, why do many young people struggle with mental health?',
+                options: [
+                    'They are lazy and unmotivated',
+                    'Excessive pressure to be productive combined with lack of healthy coping mechanisms',
+                    'Technology is inherently evil',
+                    'They do not care about their health'
+                ],
+                correct: 1
+            },
+            {
+                type: 'comprehension',
+                text: 'What is burnout?',
+                options: [
+                    'A temporary feeling of tiredness',
+                    'A state of emotional, physical, and mental exhaustion caused by prolonged stress',
+                    'A motivational phase',
+                    'A sign of weakness'
+                ],
+                correct: 1
+            },
+            {
+                type: 'vocabulary',
+                text: 'Which term describes the quality of being conscious or aware of something, focusing on the present moment?',
+                options: [
+                    'Resilience',
+                    'Mindfulness',
+                    'Wellness',
+                    'Burnout'
+                ],
+                correct: 1
+            },
+            {
+                type: 'vocabulary',
+                text: 'What does RESILIENCE mean?',
+                options: [
+                    'The ability to avoid all problems',
+                    'The capacity to withstand or recover quickly from difficulties',
+                    'A type of meditation practice',
+                    'The absence of stress'
+                ],
+                correct: 1
+            },
+            {
+                type: 'vocabulary',
+                text: 'WELLNESS refers to:',
+                options: [
+                    'Only physical health',
+                    'Only mental health',
+                    'The state of being in good health, especially as an actively pursued goal',
+                    'The absence of illness'
+                ],
+                correct: 2
+            },
+            {
+                type: 'vocabulary',
+                text: 'Which term describes strategies people use to manage painful or difficult emotions?',
+                options: [
+                    'Burnout mechanisms',
+                    'Wellness routines',
+                    'Coping mechanisms',
+                    'Resilience practices'
+                ],
+                correct: 2
+            },
+            {
+                type: 'grammar',
+                text: 'Complete: "If you _____ (prioritize) sleep, your cognitive function _____ (improve)."',
+                options: [
+                    'prioritized / would improve',
+                    'prioritize / will improve',
+                    'prioritizes / improves',
+                    'will prioritize / improves'
+                ],
+                correct: 1
+            },
+            {
+                type: 'grammar',
+                text: 'Complete: "If I _____ (have) more free time, I _____ (start) a daily mindfulness practice."',
+                options: [
+                    'have / start',
+                    'had / would start',
+                    'have had / will start',
+                    'would have / started'
+                ],
+                correct: 1
+            },
+            {
+                type: 'grammar',
+                text: 'Complete: "If she _____ (not ignore) the signs of burnout, she _____ (not need) to take a leave of absence."',
+                options: [
+                    'did not ignore / would not need',
+                    'had not ignored / would not have needed',
+                    'does not ignore / will not need',
+                    'not ignores / not needs'
+                ],
+                correct: 1
+            },
+            {
+                type: 'grammar',
+                text: 'Which conditional structure expresses a past unreal situation?',
+                options: [
+                    'Zero Conditional',
+                    'First Conditional',
+                    'Second Conditional',
+                    'Third Conditional'
+                ],
+                correct: 3
+            },
+            {
+                type: 'critical_thinking',
+                text: 'Why might society glorify burnout instead of promoting rest?',
+                options: [
+                    'Rest is actually harmful to productivity',
+                    'Historical work culture values equate exhaustion with dedication and worth',
+                    'People naturally prefer to work constantly',
+                    'Rest is scientifically proven to be laziness'
+                ],
+                correct: 1
+            },
+            {
+                type: 'critical_thinking',
+                text: 'How can practicing mindfulness help prevent burnout?',
+                options: [
+                    'It eliminates all stress',
+                    'It helps you recognize stress early and develop healthier responses',
+                    'It makes you immune to problems',
+                    'It is a waste of time'
+                ],
+                correct: 1
+            },
+            {
+                type: 'open_ended',
+                text: 'Describe one self-care practice that has helped you maintain your mental health.',
+                options: [
+                    'Student response will vary',
+                    'Student response will vary',
+                    'Student response will vary',
+                    'Student response will vary'
+                ],
+                correct: 0
+            },
+            {
+                type: 'open_ended',
+                text: 'How would you explain the balance between productivity and self-care to someone who believes rest is laziness?',
+                options: [
+                    'Student response will vary',
+                    'Student response will vary',
+                    'Student response will vary',
+                    'Student response will vary'
+                ],
+                correct: 0
+            }
+        ];
+
+        let currentQuestion = 0;
+        let scores = { comprehension: 0, vocabulary: 0, grammar: 0, critical_thinking: 0, open_ended: 0 };
+        let answers = [];
+
+        function initQuiz() {
+            renderQuestion();
+            document.getElementById('navigation').style.display = 'flex';
+        }
+
+        function renderQuestion() {
+            const container = document.getElementById('quizContainer');
+            const q = questions[currentQuestion];
+            
+            let html = `<div class="question-container active">
+                <div class="question-text">Question ${currentQuestion + 1} of ${questions.length} (${q.type.toUpperCase()})</div>
+                <div class="question-text">${q.text}</div>
+                <div class="options">`;
+            
+            q.options.forEach((option, index) => {
+                const checked = answers[currentQuestion] === index ? 'checked' : '';
+                html += `<div class="option">
+                    <label>
+                        <input type="radio" name="answer" value="${index}" ${checked} onchange="saveAnswer(${index})">
+                        ${option}
+                    </label>
+                </div>`;
+            });
+            
+            html += `</div></div>`;
+            container.innerHTML = html;
+            updateProgress();
+        }
+
+        function saveAnswer(index) {
+            answers[currentQuestion] = index;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                renderQuestion();
+            } else {
+                submitQuiz();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                renderQuestion();
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.querySelector('.btn-prev').disabled = currentQuestion === 0;
+            document.querySelector('.btn-next').textContent = currentQuestion === questions.length - 1 ? 'SUBMIT' : 'NEXT';
+        }
+
+        function submitQuiz() {
+            let totalScore = 0;
+            const categoryCount = { comprehension: 0, vocabulary: 0, grammar: 0, critical_thinking: 0, open_ended: 0 };
+
+            questions.forEach((q, index) => {
+                categoryCount[q.type]++;
+                if (q.type === 'open_ended') {
+                    scores[q.type]++;
+                } else if (answers[index] === q.correct) {
+                    scores[q.type]++;
+                    totalScore++;
+                }
+            });
+
+            const resultsDiv = document.getElementById('results');
+            const finalScore = document.getElementById('finalScore');
+            const categoryScores = document.getElementById('categoryScores');
+            
+            finalScore.textContent = totalScore + ' / ' + (questions.length - 2);
+            
+            let categoryHTML = '';
+            for (let category in scores) {
+                const count = categoryCount[category];
+                const score = scores[category];
+                const percentage = count > 0 ? Math.round((score / count) * 100) : 0;
+                categoryHTML += `<div class="category-score">
+                    <h3>${category.replace(/_/g, ' ').toUpperCase()}</h3>
+                    <p>${score} / ${count} (${percentage}%)</p>
+                </div>`;
+            }
+            
+            categoryScores.innerHTML = categoryHTML;
+            resultsDiv.classList.add('show');
+            document.getElementById('navigation').style.display = 'none';
+            document.getElementById('quizContainer').style.display = 'none';
+        }
+
+        initQuiz();
+    </script>
+</body>
+</html>
