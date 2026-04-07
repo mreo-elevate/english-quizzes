@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polarization Quiz</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .quiz-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            max-width: 700px;
+            width: 100%;
+            padding: 40px;
+        }
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .quiz-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .quiz-subtitle {
+            font-size: 14px;
+            color: #666;
+        }
+        .question-container {
+            margin-bottom: 30px;
+        }
+        .question-number {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 8px;
+        }
+        .question-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .option {
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+        }
+        .option:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+        .option input[type="radio"] {
+            margin-right: 10px;
+        }
+        .option.selected {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+        .textarea-option {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 80px;
+        }
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            gap: 10px;
+        }
+        button {
+            padding: 12px 30px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-prev {
+            background: #ddd;
+            color: #333;
+        }
+        .btn-prev:hover {
+            background: #ccc;
+        }
+        .btn-next {
+            background: #667eea;
+            color: white;
+            flex: 1;
+        }
+        .btn-next:hover {
+            background: #5568d3;
+        }
+        .btn-submit {
+            background: #28a745;
+            color: white;
+            width: 100%;
+        }
+        .btn-submit:hover {
+            background: #218838;
+        }
+        .progress {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #ddd;
+            border-radius: 3px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #667eea;
+            transition: width 0.3s;
+        }
+        .results {
+            text-align: center;
+            padding: 20px;
+        }
+        .results-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .score {
+            font-size: 48px;
+            font-weight: bold;
+            color: #667eea;
+            margin: 20px 0;
+        }
+        .category-score {
+            background: #f5f5f5;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            text-align: left;
+        }
+        .category-name {
+            font-weight: 600;
+            color: #333;
+        }
+        .category-value {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div id="quiz" class="hidden">
+            <div class="quiz-header">
+                <div class="quiz-title">POLARIZATION QUIZ</div>
+                <div class="quiz-subtitle">Lesson 6: Politics, Media and Bias</div>
+            </div>
+            <div class="progress">
+                <span id="currentQuestion">Question 1 of 15</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div id="questionContainer"></div>
+            <div class="navigation">
+                <button class="btn-prev" id="prevBtn" onclick="previousQuestion()">PREVIOUS</button>
+                <button class="btn-next" id="nextBtn" onclick="nextQuestion()">NEXT</button>
+            </div>
+        </div>
+        <div id="results" class="results hidden">
+            <div class="results-title">QUIZ COMPLETED!</div>
+            <div class="score" id="finalScore"></div>
+            <div id="categoryScores"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                type: "comprehension",
+                question: "What is polarization in the context of society?",
+                options: [
+                    "A simple disagreement between two people",
+                    "The psychological division of society into opposing camps where the other side is seen as a threat",
+                    "A temporary political disagreement that resolves quickly",
+                    "The process of media reporting on different topics"
+                ],
+                correct: 1
+            },
+            {
+                type: "comprehension",
+                question: "According to the lesson, why do media platforms amplify polarization?",
+                options: [
+                    "Because they want to educate the public",
+                    "Because anger and fear drive more clicks and engagement than nuance",
+                    "Because they are required by law to do so",
+                    "Because they support only one political ideology"
+                ],
+                correct: 1
+            },
+            {
+                type: "comprehension",
+                question: "What is an echo chamber?",
+                options: [
+                    "A physical room where people debate",
+                    "An environment where a person only encounters information that confirms their existing beliefs",
+                    "A type of social media platform",
+                    "A government institution for political discussion"
+                ],
+                correct: 1
+            },
+            {
+                type: "vocabulary",
+                question: "Which word best describes the tendency to seek information that confirms what you already believe?",
+                options: [
+                    "Misinformation",
+                    "Polarization",
+                    "Confirmation bias",
+                    "Cognitive dissonance"
+                ],
+                correct: 2
+            },
+            {
+                type: "vocabulary",
+                question: "What does 'misinformation' mean?",
+                options: [
+                    "Information that is difficult to understand",
+                    "False or inaccurate information, especially that which is deliberately intended to deceive",
+                    "Information that is too long to read",
+                    "Information that is presented in a foreign language"
+                ],
+                correct: 1
+            },
+            {
+                type: "vocabulary",
+                question: "Which term describes the mental discomfort of holding contradictory beliefs?",
+                options: [
+                    "Polarization",
+                    "Echo chamber",
+                    "Cognitive dissonance",
+                    "Confirmation bias"
+                ],
+                correct: 2
+            },
+            {
+                type: "vocabulary",
+                question: "An 'echo chamber' is characterized by:",
+                options: [
+                    "Exposure to diverse viewpoints",
+                    "Reinforcement of pre-existing beliefs through selective information",
+                    "Objective reporting of all sides",
+                    "Government control of media"
+                ],
+                correct: 1
+            },
+            {
+                type: "grammar",
+                question: "If people actively sought out opposing viewpoints, _____ polarization would decrease significantly.",
+                options: [
+                    "social",
+                    "political",
+                    "media-driven",
+                    "algorithmic"
+                ],
+                correct: 0,
+                hint: "(Zero Conditional - general truth)"
+            },
+            {
+                type: "grammar",
+                question: "If I were trapped in an echo chamber, I _____ realize how biased my information sources are.",
+                options: [
+                    "will not",
+                    "would not",
+                    "did not",
+                    "have not"
+                ],
+                correct: 1,
+                hint: "(Second Conditional - hypothetical)"
+            },
+            {
+                type: "grammar",
+                question: "If the algorithm had not prioritized engagement over truth, the spread of misinformation _____ slower.",
+                options: [
+                    "would be",
+                    "would have been",
+                    "will be",
+                    "is"
+                ],
+                correct: 1,
+                hint: "(Third Conditional - past)"
+            },
+            {
+                type: "grammar",
+                question: "If social media companies _____ responsible for the polarization they create, they would invest in solutions.",
+                options: [
+                    "are",
+                    "were",
+                    "would be",
+                    "have been"
+                ],
+                correct: 1,
+                hint: "(Second Conditional)"
+            },
+            {
+                type: "critical_thinking",
+                question: "Which statement best reflects the relationship between algorithms and polarization?",
+                options: [
+                    "Algorithms have no effect on polarization",
+                    "Algorithms are designed to promote polarization",
+                    "Algorithms profit from engagement, which is often driven by divisive content",
+                    "Algorithms are neutral tools that cannot influence human behavior"
+                ],
+                correct: 2
+            },
+            {
+                type: "critical_thinking",
+                question: "What is the most significant consequence of extreme polarization?",
+                options: [
+                    "People become more informed about different perspectives",
+                    "Society loses the ability to find common ground and solve shared problems",
+                    "Media companies lose profit",
+                    "Political debates become more civil and respectful"
+                ],
+                correct: 1
+            },
+            {
+                type: "open_ended",
+                question: "Describe a situation where confirmation bias might prevent someone from understanding a different political perspective. How could they overcome this bias?",
+                isTextarea: true
+            },
+            {
+                type: "open_ended",
+                question: "If you were designing a social media platform, what features would you implement to reduce polarization and misinformation while still allowing free speech?",
+                isTextarea: true
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let scores = {
+            comprehension: 0,
+            vocabulary: 0,
+            grammar: 0,
+            critical_thinking: 0,
+            open_ended: 0
+        };
+
+        function displayQuestion() {
+            const question = questions[currentQuestion];
+            const container = document.getElementById('questionContainer');
+            container.innerHTML = '';
+
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'question-container';
+
+            const numberDiv = document.createElement('div');
+            numberDiv.className = 'question-number';
+            numberDiv.textContent = `Question ${currentQuestion + 1} of ${questions.length}`;
+            questionDiv.appendChild(numberDiv);
+
+            const textDiv = document.createElement('div');
+            textDiv.className = 'question-text';
+            textDiv.textContent = question.question;
+            questionDiv.appendChild(textDiv);
+
+            if (question.isTextarea) {
+                const textarea = document.createElement('textarea');
+                textarea.className = 'textarea-option';
+                textarea.placeholder = 'Type your answer here...';
+                textarea.value = answers[currentQuestion] || '';
+                textarea.onchange = (e) => { answers[currentQuestion] = e.target.value; };
+                questionDiv.appendChild(textarea);
+            } else {
+                const optionsDiv = document.createElement('div');
+                optionsDiv.className = 'options';
+
+                question.options.forEach((option, index) => {
+                    const optionDiv = document.createElement('div');
+                    optionDiv.className = 'option';
+                    if (answers[currentQuestion] === index) optionDiv.classList.add('selected');
+
+                    const input = document.createElement('input');
+                    input.type = 'radio';
+                    input.name = `question${currentQuestion}`;
+                    input.value = index;
+                    input.checked = answers[currentQuestion] === index;
+                    input.onchange = () => {
+                        answers[currentQuestion] = index;
+                        displayQuestion();
+                    };
+
+                    optionDiv.appendChild(input);
+                    optionDiv.appendChild(document.createTextNode(option));
+                    optionsDiv.appendChild(optionDiv);
+                });
+
+                questionDiv.appendChild(optionsDiv);
+            }
+
+            container.appendChild(questionDiv);
+
+            document.getElementById('currentQuestion').textContent = `Question ${currentQuestion + 1} of ${questions.length}`;
+            document.getElementById('progressFill').style.width = ((currentQuestion + 1) / questions.length * 100) + '%';
+
+            document.getElementById('prevBtn').style.display = currentQuestion === 0 ? 'none' : 'block';
+            document.getElementById('nextBtn').textContent = currentQuestion === questions.length - 1 ? 'SUBMIT' : 'NEXT';
+            document.getElementById('nextBtn').onclick = currentQuestion === questions.length - 1 ? submitQuiz : nextQuestion;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                displayQuestion();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function submitQuiz() {
+            calculateScores();
+            displayResults();
+        }
+
+        function calculateScores() {
+            let totalScore = 0;
+            const categoryCount = {
+                comprehension: 0,
+                vocabulary: 0,
+                grammar: 0,
+                critical_thinking: 0,
+                open_ended: 0
+            };
+
+            questions.forEach((question, index) => {
+                categoryCount[question.type]++;
+
+                if (question.type === 'open_ended') {
+                    if (answers[index] && answers[index].trim().length > 20) {
+                        scores.open_ended += 1;
+                        totalScore += 1;
+                    }
+                } else if (answers[index] === question.correct) {
+                    scores[question.type] += 1;
+                    totalScore += 1;
+                }
+            });
+
+            return { totalScore, categoryCount };
+        }
+
+        function displayResults() {
+            document.getElementById('quiz').classList.add('hidden');
+            document.getElementById('results').classList.remove('hidden');
+
+            const { totalScore, categoryCount } = calculateScores();
+            const percentage = Math.round((totalScore / questions.length) * 100);
+
+            document.getElementById('finalScore').textContent = `${totalScore} / ${questions.length} (${percentage}%)`;
+
+            let categoryHTML = '';
+            for (const [category, count] of Object.entries(categoryCount)) {
+                const categoryScore = scores[category];
+                const categoryPercentage = Math.round((categoryScore / count) * 100);
+                categoryHTML += `
+                    <div class="category-score">
+                        <div class="category-name">${category.replace('_', ' ').toUpperCase()}</div>
+                        <div class="category-value">${categoryScore} / ${count} (${categoryPercentage}%)</div>
+                    </div>
+                `;
+            }
+            document.getElementById('categoryScores').innerHTML = categoryHTML;
+        }
+
+        window.onload = () => {
+            document.getElementById('quiz').classList.remove('hidden');
+            displayQuestion();
+        };
+    </script>
+</body>
+</html>
