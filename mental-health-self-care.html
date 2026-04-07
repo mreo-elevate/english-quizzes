@@ -19,6 +19,7 @@
         .option:hover { background: #ecf0f1; border-color: #3498db; }
         .option input[type="radio"] { margin-right: 10px; }
         .option label { cursor: pointer; display: flex; align-items: center; width: 100%; }
+        .text-input { width: 100%; padding: 12px 15px; border: 2px solid #ddd; border-radius: 6px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 14px; min-height: 100px; resize: vertical; }
         .navigation { display: flex; justify-content: space-between; gap: 10px; margin-top: 20px; }
         button { padding: 12px 24px; font-size: 16px; border: none; border-radius: 6px; cursor: pointer; transition: all 0.3s; }
         .btn-prev, .btn-next { background: #3498db; color: white; }
@@ -211,24 +212,12 @@
             {
                 type: 'open_ended',
                 text: 'Describe one self-care practice that has helped you maintain your mental health.',
-                options: [
-                    'Student response will vary',
-                    'Student response will vary',
-                    'Student response will vary',
-                    'Student response will vary'
-                ],
-                correct: 0
+                isTextInput: true
             },
             {
                 type: 'open_ended',
                 text: 'How would you explain the balance between productivity and self-care to someone who believes rest is laziness?',
-                options: [
-                    'Student response will vary',
-                    'Student response will vary',
-                    'Student response will vary',
-                    'Student response will vary'
-                ],
-                correct: 0
+                isTextInput: true
             }
         ];
 
@@ -245,28 +234,34 @@
             const container = document.getElementById('quizContainer');
             const q = questions[currentQuestion];
             
-            let html = `<div class="question-container active">
-                <div class="question-text">Question ${currentQuestion + 1} of ${questions.length} (${q.type.toUpperCase()})</div>
-                <div class="question-text">${q.text}</div>
-                <div class="options">`;
+            let html = `<div class=\"question-container active\">
+                <div class=\"question-text\">Question ${currentQuestion + 1} of ${questions.length} (${q.type.toUpperCase()})</div>
+                <div class=\"question-text\">${q.text}</div>`;
             
-            q.options.forEach((option, index) => {
-                const checked = answers[currentQuestion] === index ? 'checked' : '';
-                html += `<div class="option">
-                    <label>
-                        <input type="radio" name="answer" value="${index}" ${checked} onchange="saveAnswer(${index})">
-                        ${option}
-                    </label>
-                </div>`;
-            });
+            if (q.isTextInput) {
+                const textValue = answers[currentQuestion] || '';
+                html += `<textarea class=\"text-input\" placeholder=\"Type your answer here...\" onchange=\"saveAnswer(this.value)\">${textValue}</textarea>`;
+            } else {
+                html += `<div class=\"options\">`;
+                q.options.forEach((option, index) => {
+                    const checked = answers[currentQuestion] === index ? 'checked' : '';
+                    html += `<div class=\"option\">
+                        <label>
+                            <input type=\"radio\" name=\"answer\" value=\"${index}\" ${checked} onchange=\"saveAnswer(${index})\">
+                            ${option}
+                        </label>
+                    </div>`;
+                });
+                html += `</div>`;
+            }
             
-            html += `</div></div>`;
+            html += `</div>`;
             container.innerHTML = html;
             updateProgress();
         }
 
-        function saveAnswer(index) {
-            answers[currentQuestion] = index;
+        function saveAnswer(value) {
+            answers[currentQuestion] = value;
         }
 
         function nextQuestion() {
@@ -299,7 +294,9 @@
             questions.forEach((q, index) => {
                 categoryCount[q.type]++;
                 if (q.type === 'open_ended') {
-                    scores[q.type]++;
+                    if (answers[index] && answers[index].trim().length > 0) {
+                        scores[q.type]++;
+                    }
                 } else if (answers[index] === q.correct) {
                     scores[q.type]++;
                     totalScore++;
