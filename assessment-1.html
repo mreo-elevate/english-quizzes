@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assessment I - Comprehensive Quiz</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #333;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        .header p {
+            color: #666;
+            font-size: 16px;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .question-container {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .question-container.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .question-number {
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .question-text {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .option:hover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+        .option input[type="radio"] {
+            margin-right: 12px;
+            cursor: pointer;
+        }
+        .option label {
+            cursor: pointer;
+            flex: 1;
+        }
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+            justify-content: space-between;
+        }
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: bold;
+        }
+        .btn-prev {
+            background: #ccc;
+            color: #333;
+        }
+        .btn-prev:hover {
+            background: #bbb;
+        }
+        .btn-next {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            flex: 1;
+        }
+        .btn-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .results {
+            display: none;
+            text-align: center;
+            animation: slideIn 0.5s ease;
+        }
+        .results.show {
+            display: block;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .score-display {
+            font-size: 48px;
+            font-weight: bold;
+            color: #667eea;
+            margin: 20px 0;
+        }
+        .score-message {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .score-details {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 6px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        .score-details p {
+            margin: 10px 0;
+            font-size: 16px;
+            color: #666;
+        }
+        .restart-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 30px;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        .restart-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Assessment I</h1>
+            <p>Comprehensive Vocabulary & Grammar Test</p>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div id="quizContainer">
+            <!-- Questions will be inserted here -->
+        </div>
+
+        <div class="results" id="results">
+            <h2>Quiz Complete!</h2>
+            <div class="score-display" id="scoreDisplay">0/30</div>
+            <div class="score-message" id="scoreMessage"></div>
+            <div class="score-details">
+                <p><strong>Your Score:</strong> <span id="scorePercentage">0</span>%</p>
+                <p><strong>Correct Answers:</strong> <span id="correctCount">0</span>/30</p>
+                <p><strong>Level:</strong> Medium to Difficult</p>
+            </div>
+            <button class="restart-btn" onclick="location.reload()">Retake Quiz</button>
+        </div>
+
+        <div class="buttons" id="buttons">
+            <button class="btn-prev" id="prevBtn" onclick="previousQuestion()" style="display:none;">← Previous</button>
+            <button class="btn-next" id="nextBtn" onclick="nextQuestion()">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            // Lesson 2: Technology & Mental Health - Passive Voice
+            {
+                question: "Which sentence is in passive voice?",
+                options: [
+                    "Social media affects teenagers' mental health.",
+                    "Teenagers' mental health is affected by social media.",
+                    "Teenagers affect social media.",
+                    "Social media is affecting teenagers."
+                ],
+                correct: 1
+            },
+            {
+                question: "Rewrite in passive voice: 'Researchers discovered that 48% of teens view social media negatively.'",
+                options: [
+                    "It is discovered that 48% of teens view social media negatively.",
+                    "It is discovered by researchers that 48% of teens view social media negatively.",
+                    "It was discovered that 48% of teens view social media negatively.",
+                    "Researchers discovered that social media is viewed negatively by 48% of teens."
+                ],
+                correct: 2
+            },
+            {
+                question: "What does 'anxiety' mean?",
+                options: [
+                    "A feeling of joy and happiness",
+                    "A feeling of worry or nervousness about something",
+                    "A state of being calm and relaxed",
+                    "A medical condition of the heart"
+                ],
+                correct: 1
+            },
+            {
+                question: "Which word is a synonym for 'engagement'?",
+                options: [
+                    "Disinterest",
+                    "Involvement",
+                    "Avoidance",
+                    "Boredom"
+                ],
+                correct: 1
+            },
+
+            // Lesson 6: Beauty Standards - Subjunctive Mood
+            {
+                question: "Which sentence uses the subjunctive mood correctly?",
+                options: [
+                    "I wish I am more confident.",
+                    "I wish I were more confident.",
+                    "I wish I was more confident.",
+                    "I wish I am being more confident."
+                ],
+                correct: 1
+            },
+            {
+                question: "Complete: 'It is important that she _____ her true self.'",
+                options: [
+                    "accepts",
+                    "accept",
+                    "will accept",
+                    "has accepted"
+                ],
+                correct: 1
+            },
+            {
+                question: "What does 'eugenics' mean?",
+                options: [
+                    "The study of beautiful people",
+                    "The practice of trying to improve the human population by selective breeding",
+                    "A type of cosmetic surgery",
+                    "The study of genes"
+                ],
+                correct: 1
+            },
+            {
+                question: "Which word means 'the quality of being beautiful'?",
+                options: [
+                    "Aesthetic",
+                    "Authentic",
+                    "Artificial",
+                    "Aggressive"
+                ],
+                correct: 0
+            },
+
+            // Lesson 6: Polarization - Irregular Plurals
+            {
+                question: "What is the plural of 'crisis'?",
+                options: [
+                    "crises",
+                    "crisises",
+                    "crisis's",
+                    "crisees"
+                ],
+                correct: 0
+            },
+            {
+                question: "What is the plural of 'phenomenon'?",
+                options: [
+                    "phenomenons",
+                    "phenomena",
+                    "phenomenas",
+                    "phenomenae"
+                ],
+                correct: 1
+            },
+            {
+                question: "What is the plural of 'medium'?",
+                options: [
+                    "mediums",
+                    "media",
+                    "medias",
+                    "mediae"
+                ],
+                correct: 1
+            },
+            {
+                question: "What does 'polarization' mean?",
+                options: [
+                    "The division into two sharply contrasting groups or sets of opinions",
+                    "The process of becoming more similar",
+                    "A type of ice formation",
+                    "The study of polar bears"
+                ],
+                correct: 0
+            },
+            {
+                question: "Which word means 'a strong belief or conviction'?",
+                options: [
+                    "Ideology",
+                    "Irony",
+                    "Irony",
+                    "Ignorance"
+                ],
+                correct: 0
+            },
+
+            // Lesson 7: AI History - Passive Voice
+            {
+                question: "What is the passive voice form of 'Alan Turing proposed the Turing Test in 1950'?",
+                options: [
+                    "The Turing Test was proposed by Alan Turing in 1950.",
+                    "The Turing Test is proposed by Alan Turing in 1950.",
+                    "Alan Turing was proposed the Turing Test in 1950.",
+                    "The Turing Test proposed Alan Turing in 1950."
+                ],
+                correct: 0
+            },
+            {
+                question: "What does 'algorithm' mean?",
+                options: [
+                    "A mathematical or computational procedure for solving a problem",
+                    "A type of computer hardware",
+                    "A programming language",
+                    "A network of computers"
+                ],
+                correct: 0
+            },
+            {
+                question: "Which word means 'the ability of a system to learn from data'?",
+                options: [
+                    "Machine Learning",
+                    "Deep Thinking",
+                    "Artificial Stupidity",
+                    "Computer Memory"
+                ],
+                correct: 0
+            },
+
+            // Lesson 7: Gaming - Modal Verbs of Deduction
+            {
+                question: "Which sentence uses modal verbs of deduction correctly?",
+                options: [
+                    "He must have played for 24 hours straight.",
+                    "He must plays for 24 hours straight.",
+                    "He must to play for 24 hours straight.",
+                    "He must playing for 24 hours straight."
+                ],
+                correct: 0
+            },
+            {
+                question: "Complete: 'The game sold 10 million copies. It _____ be very popular.'",
+                options: [
+                    "must",
+                    "can't",
+                    "might",
+                    "could"
+                ],
+                correct: 0
+            },
+            {
+                question: "What does 'immersive' mean?",
+                options: [
+                    "Providing a deeply engaging experience",
+                    "Shallow and superficial",
+                    "Boring and repetitive",
+                    "Difficult to understand"
+                ],
+                correct: 0
+            },
+            {
+                question: "Which word means 'the state of complete focus and engagement'?",
+                options: [
+                    "Flow state",
+                    "Stagnation",
+                    "Distraction",
+                    "Confusion"
+                ],
+                correct: 0
+            },
+
+            // Lesson 5: Mental Health - Conditionals
+            {
+                question: "Which conditional is correct? 'If I _____ stressed, I would play video games.'",
+                options: [
+                    "am",
+                    "was",
+                    "were",
+                    "have been"
+                ],
+                correct: 2
+            },
+            {
+                question: "Complete: 'If you practice mindfulness daily, you _____ reduce stress.'",
+                options: [
+                    "will",
+                    "would",
+                    "might",
+                    "could"
+                ],
+                correct: 0
+            },
+            {
+                question: "What does 'resilience' mean?",
+                options: [
+                    "The ability to recover from difficulties",
+                    "The tendency to give up easily",
+                    "A type of medical treatment",
+                    "A psychological disorder"
+                ],
+                correct: 0
+            },
+            {
+                question: "Which word means 'a strategy for managing stress or difficult emotions'?",
+                options: [
+                    "Coping mechanism",
+                    "Avoidance tactic",
+                    "Denial strategy",
+                    "Suppression method"
+                ],
+                correct: 0
+            },
+
+            // Mixed Review
+            {
+                question: "What is the plural of 'analysis'?",
+                options: [
+                    "analysises",
+                    "analyses",
+                    "analysises",
+                    "analysis's"
+                ],
+                correct: 1
+            },
+            {
+                question: "Which sentence is grammatically correct?",
+                options: [
+                    "It is believed that the internet have changed society.",
+                    "It is believed that the internet has changed society.",
+                    "It is believed that the internet are changing society.",
+                    "It is believed that the internet were changed society."
+                ],
+                correct: 1
+            },
+            {
+                question: "What does 'cognitive dissonance' mean?",
+                options: [
+                    "The discomfort felt when holding contradictory beliefs",
+                    "A type of learning disability",
+                    "A musical term",
+                    "A neurological disorder"
+                ],
+                correct: 0
+            },
+            {
+                question: "Which word is an antonym for 'authentic'?",
+                options: [
+                    "Genuine",
+                    "Real",
+                    "Fake",
+                    "True"
+                ],
+                correct: 2
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        const answers = new Array(questions.length).fill(null);
+
+        function initQuiz() {
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const container = document.getElementById('quizContainer');
+            const question = questions[currentQuestion];
+            
+            let html = `
+                <div class="question-container active">
+                    <div class="question-number">Question ${currentQuestion + 1} of ${questions.length}</div>
+                    <div class="question-text">${question.question}</div>
+                    <div class="options">
+            `;
+
+            question.options.forEach((option, index) => {
+                const isChecked = answers[currentQuestion] === index ? 'checked' : '';
+                html += `
+                    <div class="option">
+                        <input type="radio" id="option${index}" name="answer" value="${index}" ${isChecked} onchange="answers[${currentQuestion}] = ${index}">
+                        <label for="option${index}">${option}</label>
+                    </div>
+                `;
+            });
+
+            html += `</div></div>`;
+            container.innerHTML = html;
+            
+            updateProgress();
+            updateButtons();
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function updateButtons() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            if (currentQuestion === 0) {
+                prevBtn.style.display = 'none';
+            } else {
+                prevBtn.style.display = 'block';
+            }
+
+            if (currentQuestion === questions.length - 1) {
+                nextBtn.textContent = 'Submit Quiz';
+            } else {
+                nextBtn.textContent = 'Next →';
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                renderQuestion();
+            } else {
+                submitQuiz();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                renderQuestion();
+            }
+        }
+
+        function submitQuiz() {
+            score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) {
+                    score++;
+                }
+            });
+
+            const percentage = Math.round((score / questions.length) * 100);
+            let message = '';
+
+            if (percentage >= 90) {
+                message = 'Excellent! You have mastered this material.';
+            } else if (percentage >= 75) {
+                message = 'Great! You have a strong understanding.';
+            } else if (percentage >= 60) {
+                message = 'Good! Keep practicing to improve.';
+            } else {
+                message = 'Keep studying to master this content.';
+            }
+
+            document.getElementById('quizContainer').style.display = 'none';
+            document.getElementById('buttons').style.display = 'none';
+            document.getElementById('results').classList.add('show');
+            document.getElementById('scoreDisplay').textContent = `${score}/30`;
+            document.getElementById('scorePercentage').textContent = percentage;
+            document.getElementById('correctCount').textContent = score;
+            document.getElementById('scoreMessage').textContent = message;
+        }
+
+        initQuiz();
+    </script>
+</body>
+</html>
