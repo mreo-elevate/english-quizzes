@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Body Image & Self-Esteem Quiz</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f5f5; }
+        .container { max-width: 900px; margin: 40px auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { text-align: center; margin-bottom: 40px; }
+        .header h1 { color: #333; font-size: 32px; margin-bottom: 10px; }
+        .progress-bar { width: 100%; height: 8px; background: #ddd; border-radius: 4px; margin-bottom: 30px; overflow: hidden; }
+        .progress-fill { height: 100%; background: #4CAF50; width: 0%; transition: width 0.3s; }
+        .question-container { margin-bottom: 40px; }
+        .question-number { color: #999; font-size: 14px; margin-bottom: 10px; }
+        .question-text { font-size: 18px; font-weight: bold; color: #333; margin-bottom: 20px; line-height: 1.6; }
+        .options { display: flex; flex-direction: column; gap: 12px; }
+        .option { padding: 15px; border: 2px solid #ddd; border-radius: 6px; cursor: pointer; transition: all 0.3s; background: white; }
+        .option:hover { border-color: #4CAF50; background: #f9f9f9; }
+        .option input[type="radio"] { margin-right: 10px; cursor: pointer; }
+        .option label { cursor: pointer; display: flex; align-items: center; width: 100%; }
+        .navigation { display: flex; justify-content: space-between; margin-top: 40px; gap: 10px; }
+        button { padding: 12px 30px; font-size: 16px; border: none; border-radius: 6px; cursor: pointer; transition: all 0.3s; }
+        .btn-prev, .btn-next { background: #2196F3; color: white; }
+        .btn-prev:hover, .btn-next:hover { background: #0b7dda; }
+        .btn-prev:disabled, .btn-next:disabled { background: #ccc; cursor: not-allowed; }
+        .btn-submit { background: #4CAF50; color: white; width: 100%; }
+        .btn-submit:hover { background: #45a049; }
+        .results { text-align: center; }
+        .score { font-size: 48px; font-weight: bold; color: #4CAF50; margin: 20px 0; }
+        .feedback { font-size: 18px; color: #666; margin-bottom: 20px; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Body Image & Self-Esteem Quiz</h1>
+            <p>Test your understanding of body image, media influence, and self-esteem</p>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div id="quizContainer">
+            <div class="question-container">
+                <div class="question-number" id="questionNumber"></div>
+                <div class="question-text" id="questionText"></div>
+                <div class="options" id="optionsContainer"></div>
+            </div>
+        </div>
+
+        <div id="resultsContainer" class="results hidden">
+            <h2>Quiz Complete!</h2>
+            <div class="score" id="finalScore"></div>
+            <div class="feedback" id="feedbackMessage"></div>
+            <button onclick="location.reload()" style="background: #2196F3; color: white; padding: 12px 30px; border-radius: 6px; cursor: pointer;">Retake Quiz</button>
+        </div>
+
+        <div class="navigation">
+            <button class="btn-prev" id="prevBtn" onclick="previousQuestion()">← PREVIOUS</button>
+            <button class="btn-next" id="nextBtn" onclick="nextQuestion()">NEXT →</button>
+            <button class="btn-submit hidden" id="submitBtn" onclick="submitQuiz()">SUBMIT QUIZ</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "According to research cited in the BBC article on body image, what is the PRIMARY psychological mechanism behind social media-induced body dissatisfaction?",
+                options: [
+                    { text: "Increased awareness of health and fitness trends", correct: false },
+                    { text: "Social comparison theory and curated content exposure", correct: true },
+                    { text: "Reduced access to diverse body representations", correct: false },
+                    { text: "Improved self-monitoring through digital feedback", correct: false }
+                ]
+            },
+            {
+                question: "The concept of 'filter culture' primarily affects body image by:",
+                options: [
+                    { text: "Encouraging more authentic self-expression", correct: false },
+                    { text: "Creating unrealistic beauty standards through digitally altered images", correct: true },
+                    { text: "Reducing the influence of traditional media", correct: false },
+                    { text: "Promoting body diversity and acceptance", correct: false }
+                ]
+            },
+            {
+                question: "Which of the following is NOT a documented consequence of prolonged social media use on adolescent self-esteem?",
+                options: [
+                    { text: "Increased rates of anxiety and depression", correct: false },
+                    { text: "Enhanced critical thinking about media literacy", correct: true },
+                    { text: "Development of eating disorders", correct: false },
+                    { text: "Body dysmorphic symptoms", correct: false }
+                ]
+            },
+            {
+                question: "The term 'airbrushed' in the context of body image refers to:",
+                options: [
+                    { text: "A makeup technique used by professional models", correct: false },
+                    { text: "Digital manipulation of images to create unrealistic beauty standards", correct: true },
+                    { text: "A type of cosmetic surgery procedure", correct: false },
+                    { text: "A natural skin condition", correct: false }
+                ]
+            },
+            {
+                question: "Cognitive dissonance in body image occurs when:",
+                options: [
+                    { text: "A person's actual body matches their ideal body", correct: false },
+                    { text: "There is conflict between one's self-perception and media-presented ideals", correct: true },
+                    { text: "Someone receives compliments about their appearance", correct: false },
+                    { text: "A person exercises regularly", correct: false }
+                ]
+            },
+            {
+                question: "Research on 'curated feeds' suggests that:",
+                options: [
+                    { text: "They provide an accurate representation of real life", correct: false },
+                    { text: "They present highly selective, idealized versions of people's lives", correct: true },
+                    { text: "They reduce body image concerns", correct: false },
+                    { text: "They have no psychological impact on viewers", correct: false }
+                ]
+            },
+            {
+                question: "The 'thin-ideal' internalization is most strongly associated with:",
+                options: [
+                    { text: "Increased physical fitness and health", correct: false },
+                    { text: "Body dissatisfaction and disordered eating patterns", correct: true },
+                    { text: "Improved mental health outcomes", correct: false },
+                    { text: "Enhanced social relationships", correct: false }
+                ]
+            },
+            {
+                question: "Which compound adjective best describes the impact of heavily filtered social media content?",
+                options: [
+                    { text: "Image-obsessed", correct: false },
+                    { text: "Picture-perfect", correct: true },
+                    { text: "Self-inflicted", correct: false },
+                    { text: "High-profile", correct: false }
+                ]
+            },
+            {
+                question: "Body positivity movements primarily aim to:",
+                options: [
+                    { text: "Promote a single ideal body type", correct: false },
+                    { text: "Challenge narrow beauty standards and celebrate body diversity", correct: true },
+                    { text: "Eliminate all concerns about health", correct: false },
+                    { text: "Increase cosmetic surgery rates", correct: false }
+                ]
+            },
+            {
+                question: "The phenomenon where people feel worse about their bodies after scrolling social media is called:",
+                options: [
+                    { text: "Body awareness", correct: false },
+                    { text: "Social comparison effect", correct: true },
+                    { text: "Self-esteem boost", correct: false },
+                    { text: "Digital empowerment", correct: false }
+                ]
+            },
+            {
+                question: "Which of the following is a 'deep-seated' issue in body image discourse?",
+                options: [
+                    { text: "The recent invention of mirrors", correct: false },
+                    { text: "Historical and systemic beauty standards rooted in culture and media", correct: true },
+                    { text: "Natural human curiosity about appearance", correct: false },
+                    { text: "The development of modern clothing", correct: false }
+                ]
+            },
+            {
+                question: "According to the statistics presented, what percentage of women report body dissatisfaction?",
+                options: [
+                    { text: "Approximately 45%", correct: false },
+                    { text: "Approximately 91%", correct: true },
+                    { text: "Approximately 65%", correct: false },
+                    { text: "Approximately 30%", correct: false }
+                ]
+            },
+            {
+                question: "The 'long-lasting' effects of eating disorders include:",
+                options: [
+                    { text: "Only temporary physical symptoms", correct: false },
+                    { text: "Psychological, physical, and social consequences extending into adulthood", correct: true },
+                    { text: "Improved metabolism", correct: false },
+                    { text: "Enhanced social skills", correct: false }
+                ]
+            },
+            {
+                question: "Which factor is LEAST likely to influence adolescent body image?",
+                options: [
+                    { text: "Peer comparison and social media exposure", correct: false },
+                    { text: "Family attitudes toward appearance", correct: false },
+                    { text: "The color of one's bedroom walls", correct: true },
+                    { text: "Media representation of body types", correct: false }
+                ]
+            },
+            {
+                question: "The concept of 'photo-edited' content in advertising primarily serves to:",
+                options: [
+                    { text: "Provide accurate product representations", correct: false },
+                    { text: "Create idealized images that are often unattainable in reality", correct: true },
+                    { text: "Reduce consumer expectations", correct: false },
+                    { text: "Promote body diversity", correct: false }
+                ]
+            },
+            {
+                question: "Self-esteem based primarily on physical appearance is considered:",
+                options: [
+                    { text: "A sign of healthy self-awareness", correct: false },
+                    { text: "Unstable and vulnerable to external criticism", correct: true },
+                    { text: "The most reliable form of confidence", correct: false },
+                    { text: "Unaffected by social media", correct: false }
+                ]
+            },
+            {
+                question: "The 'image-obsessed' culture perpetuated by social media can lead to:",
+                options: [
+                    { text: "Increased focus on internal character development", correct: false },
+                    { text: "Reduced mental health and increased anxiety disorders", correct: true },
+                    { text: "Improved body functionality", correct: false },
+                    { text: "Better educational outcomes", correct: false }
+                ]
+            },
+            {
+                question: "Which statement about body image and self-esteem is most accurate?",
+                options: [
+                    { text: "Body image is determined solely by genetics", correct: false },
+                    { text: "Self-esteem is multifaceted and should not depend exclusively on appearance", correct: true },
+                    { text: "Social media has no influence on body perception", correct: false },
+                    { text: "Body dissatisfaction is a natural and unchangeable part of adolescence", correct: false }
+                ]
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function displayQuestion() {
+            const question = questions[currentQuestion];
+            const shuffledOptions = shuffleArray(question.options);
+
+            document.getElementById('questionNumber').textContent = `Question ${currentQuestion + 1} of ${questions.length}`;
+            document.getElementById('questionText').textContent = question.question;
+
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+
+            shuffledOptions.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.innerHTML = `
+                    <label>
+                        <input type="radio" name="answer" value="${index}" ${answers[currentQuestion] === index ? 'checked' : ''}>
+                        ${option.text}
+                    </label>
+                `;
+                optionDiv.addEventListener('click', () => {
+                    document.querySelector(`input[value="${index}"]`).checked = true;
+                    answers[currentQuestion] = index;
+                });
+                optionsContainer.appendChild(optionDiv);
+            });
+
+            updateProgress();
+            updateButtons();
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function updateButtons() {
+            document.getElementById('prevBtn').disabled = currentQuestion === 0;
+            document.getElementById('nextBtn').classList.toggle('hidden', currentQuestion === questions.length - 1);
+            document.getElementById('submitBtn').classList.toggle('hidden', currentQuestion !== questions.length - 1);
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                displayQuestion();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function submitQuiz() {
+            let score = 0;
+            questions.forEach((question, index) => {
+                if (answers[index] !== null) {
+                    const shuffledOptions = shuffleArray(question.options);
+                    if (shuffledOptions[answers[index]].correct) {
+                        score++;
+                    }
+                }
+            });
+
+            const percentage = Math.round((score / questions.length) * 100);
+            let feedback = '';
+
+            if (percentage >= 90) {
+                feedback = 'Excellent! You have mastered this lesson.';
+            } else if (percentage >= 75) {
+                feedback = 'Great! You have a strong understanding.';
+            } else if (percentage >= 60) {
+                feedback = 'Good! Keep practicing to improve.';
+            } else {
+                feedback = 'Keep studying to master this content.';
+            }
+
+            document.getElementById('quizContainer').classList.add('hidden');
+            document.getElementById('resultsContainer').classList.remove('hidden');
+            document.getElementById('finalScore').textContent = `${score}/${questions.length} (${percentage}%)`;
+            document.getElementById('feedbackMessage').textContent = feedback;
+            document.querySelector('.navigation').classList.add('hidden');
+        }
+
+        // Initialize
+        displayQuestion();
+    </script>
+</body>
+</html>
