@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mental Health Disorders Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .quiz-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #667eea;
+            transition: width 0.3s ease;
+        }
+        .question-number {
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        .question-text {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+            line-height: 1.6;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+        .option {
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        .option:hover {
+            border-color: #667eea;
+            background: #f5f5f5;
+        }
+        .option input[type="radio"] {
+            margin-right: 10px;
+        }
+        .option label {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+            color: #555;
+        }
+        .option.selected {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-prev {
+            background: #e0e0e0;
+            color: #333;
+        }
+        .btn-prev:hover:not(:disabled) {
+            background: #d0d0d0;
+        }
+        .btn-next {
+            background: #667eea;
+            color: white;
+            flex: 1;
+        }
+        .btn-next:hover:not(:disabled) {
+            background: #5568d3;
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .results {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .results.show {
+            display: block;
+        }
+        .score-display {
+            font-size: 48px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        .feedback-message {
+            font-size: 20px;
+            color: #555;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        .restart-btn {
+            background: #667eea;
+            color: white;
+            padding: 15px 40px;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        .restart-btn:hover {
+            background: #5568d3;
+        }
+        .quiz-content {
+            display: block;
+        }
+        .quiz-content.hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="quiz-content" id="quizContent">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="question-number" id="questionNumber"></div>
+            <div class="question-text" id="questionText"></div>
+            <div class="options" id="optionsContainer"></div>
+            <div class="navigation">
+                <button class="btn-prev" id="prevBtn" onclick="previousQuestion()">← PREVIOUS</button>
+                <button class="btn-next" id="nextBtn" onclick="nextQuestion()">NEXT →</button>
+            </div>
+        </div>
+        <div class="results" id="results">
+            <div class="score-display" id="scoreDisplay"></div>
+            <div class="feedback-message" id="feedbackMessage"></div>
+            <button class="restart-btn" onclick="restartQuiz()">RETAKE QUIZ</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "Which of the following best describes 'comorbidity' in the context of mental health disorders?",
+                options: [
+                    "The simultaneous occurrence of two or more distinct disorders in the same individual",
+                    "The tendency of mental health disorders to worsen over time without treatment",
+                    "The genetic predisposition to develop multiple personality traits",
+                    "The social stigma associated with being diagnosed with a mental disorder"
+                ],
+                correct: 0
+            },
+            {
+                question: "According to recent research, what percentage of adults in the U.S. experience mental illness annually?",
+                options: [
+                    "Approximately 15-20%",
+                    "Approximately 43% or higher",
+                    "Approximately 5-10%",
+                    "Approximately 60-70%"
+                ],
+                correct: 1
+            },
+            {
+                question: "Which relative clause correctly describes individuals with neurodivergence?",
+                options: [
+                    "Individuals which have autism or ADHD are considered neurodivergent.",
+                    "Individuals who have autism or ADHD are considered neurodivergent.",
+                    "Individuals where have autism or ADHD are considered neurodivergent.",
+                    "Individuals that autism or ADHD are considered neurodivergent."
+                ],
+                correct: 1
+            },
+            {
+                question: "What is the primary difference between Generalized Anxiety Disorder (GAD) and panic disorder?",
+                options: [
+                    "GAD involves persistent worry, while panic disorder involves sudden, intense episodes of fear",
+                    "Panic disorder is more common in women than GAD",
+                    "GAD only affects adolescents, while panic disorder affects adults",
+                    "There is no significant difference; they are the same condition"
+                ],
+                correct: 0
+            },
+            {
+                question: "Which term describes the reduced ability to regulate emotions, commonly seen in ADHD and autism?",
+                options: [
+                    "Emotional dysregulation",
+                    "Affective flattening",
+                    "Emotional suppression",
+                    "Mood stabilization"
+                ],
+                correct: 0
+            },
+            {
+                question: "In which relative clause context would 'whose' be most appropriately used?",
+                options: [
+                    "Patients whose symptoms persist for more than two weeks should seek professional help.",
+                    "The therapist which helped me overcome my anxiety was very compassionate.",
+                    "Depression is a condition where people experience persistent sadness.",
+                    "PTSD is a disorder that develops after traumatic experiences."
+                ],
+                correct: 0
+            },
+            {
+                question: "What is the estimated percentage of children diagnosed with ADHD whose symptoms persist into adulthood?",
+                options: [
+                    "Approximately 10-15%",
+                    "Approximately 30-40%",
+                    "Approximately 50-70%",
+                    "Approximately 80-90%"
+                ],
+                correct: 2
+            },
+            {
+                question: "Which of the following is NOT a primary symptom of Obsessive-Compulsive Disorder (OCD)?",
+                options: [
+                    "Intrusive, unwanted thoughts (obsessions)",
+                    "Repetitive behaviors or mental acts (compulsions)",
+                    "Persistent hallucinations and delusions",
+                    "Significant distress or impairment in functioning"
+                ],
+                correct: 2
+            },
+            {
+                question: "How would you correctly combine these sentences using a relative clause? 'The medication has side effects. It was prescribed for my anxiety.'",
+                options: [
+                    "The medication which was prescribed for my anxiety has side effects.",
+                    "The medication that has side effects was prescribed for my anxiety.",
+                    "The medication where was prescribed for my anxiety has side effects.",
+                    "The medication whose was prescribed for my anxiety has side effects."
+                ],
+                correct: 0
+            },
+            {
+                question: "What is the primary distinction between Major Depressive Disorder and Persistent Depressive Disorder (Dysthymia)?",
+                options: [
+                    "MDD involves more severe symptoms but shorter duration; Dysthymia is less severe but longer-lasting",
+                    "MDD only affects women; Dysthymia only affects men",
+                    "They are identical conditions with different names",
+                    "MDD is caused by life events; Dysthymia is purely genetic"
+                ],
+                correct: 0
+            },
+            {
+                question: "Which term describes the psychological phenomenon where physical symptoms occur without a clear medical cause?",
+                options: [
+                    "Psychosomatic",
+                    "Hypochondria",
+                    "Malingering",
+                    "Somatization"
+                ],
+                correct: 3
+            },
+            {
+                question: "In the context of Bipolar Disorder, what is a 'mixed episode'?",
+                options: [
+                    "When a person experiences both manic and depressive symptoms simultaneously",
+                    "When a person switches rapidly between manic and depressive episodes",
+                    "When a person experiences mild mood changes without extremes",
+                    "When a person has multiple personality disorders at once"
+                ],
+                correct: 0
+            },
+            {
+                question: "Which relative clause correctly describes the relationship between trauma and PTSD?",
+                options: [
+                    "PTSD is a disorder that develops after individuals experience or witness traumatic events.",
+                    "PTSD is a condition which people are born with from childhood.",
+                    "PTSD is a syndrome where only combat veterans can develop.",
+                    "PTSD is an illness whose causes are purely genetic."
+                ],
+                correct: 0
+            },
+            {
+                question: "What percentage of individuals with Autism Spectrum Disorder (ASD) also experience anxiety or depression?",
+                options: [
+                    "Approximately 10-15%",
+                    "Approximately 30-40%",
+                    "Approximately 50-80%",
+                    "Approximately 90%+"
+                ],
+                correct: 2
+            },
+            {
+                question: "Which of the following best defines 'stigmatization' in mental health contexts?",
+                options: [
+                    "The discrimination and negative stereotyping of individuals with mental health disorders",
+                    "The medical treatment of mental health conditions with medication",
+                    "The genetic inheritance of mental health disorders",
+                    "The temporary nature of most mental health conditions"
+                ],
+                correct: 0
+            },
+            {
+                question: "How would you correctly use 'where' in a relative clause about mental health treatment?",
+                options: [
+                    "Therapy provides a safe space where individuals can process their emotions.",
+                    "The therapist where helped me was very experienced.",
+                    "Depression is a condition where people experience it constantly.",
+                    "Anxiety is a disorder which occurs in safe spaces."
+                ],
+                correct: 0
+            },
+            {
+                question: "What is the primary neurotransmitter implicated in Major Depressive Disorder?",
+                options: [
+                    "Serotonin",
+                    "Dopamine",
+                    "Acetylcholine",
+                    "Glutamate"
+                ],
+                correct: 0
+            },
+            {
+                question: "Which statement correctly uses a relative clause to describe individuals with eating disorders?",
+                options: [
+                    "Individuals whose eating behaviors are severely restricted often experience malnutrition.",
+                    "Individuals which have eating disorders are always underweight.",
+                    "Eating disorders are conditions where only teenagers develop.",
+                    "People that eating disorders need immediate hospitalization."
+                ],
+                correct: 0
+            },
+            {
+                question: "In the DSM-5, what is the minimum duration of symptoms required for a diagnosis of Major Depressive Disorder?",
+                options: [
+                    "At least 1 week",
+                    "At least 2 weeks",
+                    "At least 1 month",
+                    "At least 3 months"
+                ],
+                correct: 1
+            },
+            {
+                question: "Which of the following is a key difference between Social Anxiety Disorder and Shyness?",
+                options: [
+                    "SAD involves intense fear and avoidance that significantly impairs functioning; shyness is a personality trait",
+                    "Shyness is more severe than SAD",
+                    "SAD only affects extroverts; shyness only affects introverts",
+                    "There is no meaningful difference between the two"
+                ],
+                correct: 0
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function displayQuestion() {
+            const question = questions[currentQuestion];
+            const shuffledOptions = shuffleArray(question.options);
+            
+            // Find the correct answer index in shuffled array
+            const correctIndex = shuffledOptions.indexOf(question.options[question.correct]);
+            
+            document.getElementById('questionNumber').textContent = `Question ${currentQuestion + 1} of ${questions.length}`;
+            document.getElementById('questionText').textContent = question.question;
+            
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            
+            shuffledOptions.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.innerHTML = `
+                    <label>
+                        <input type="radio" name="answer" value="${index}" ${answers[currentQuestion] === index ? 'checked' : ''}>
+                        ${option}
+                    </label>
+                `;
+                optionDiv.onclick = () => selectOption(index);
+                if (answers[currentQuestion] === index) {
+                    optionDiv.classList.add('selected');
+                }
+                optionsContainer.appendChild(optionDiv);
+            });
+            
+            updateProgress();
+            updateButtons();
+        }
+
+        function selectOption(index) {
+            answers[currentQuestion] = index;
+            displayQuestion();
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                displayQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function updateButtons() {
+            document.getElementById('prevBtn').disabled = currentQuestion === 0;
+            document.getElementById('nextBtn').textContent = currentQuestion === questions.length - 1 ? 'SUBMIT' : 'NEXT →';
+        }
+
+        function showResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                const shuffledOptions = shuffleArray(questions[index].options);
+                const correctIndex = shuffledOptions.indexOf(questions[index].options[questions[index].correct]);
+                if (answer === correctIndex) {
+                    score++;
+                }
+            });
+
+            const percentage = Math.round((score / questions.length) * 100);
+            document.getElementById('quizContent').classList.add('hidden');
+            document.getElementById('results').classList.add('show');
+            document.getElementById('scoreDisplay').textContent = `${score}/${questions.length} (${percentage}%)`;
+            
+            let feedback = '';
+            if (percentage >= 90) {
+                feedback = 'Excellent! You have mastered this material on mental health disorders.';
+            } else if (percentage >= 75) {
+                feedback = 'Great! You have a strong understanding of mental health disorders.';
+            } else if (percentage >= 60) {
+                feedback = 'Good! Keep practicing to deepen your knowledge of mental health disorders.';
+            } else {
+                feedback = 'Keep studying to master this important content on mental health disorders.';
+            }
+            document.getElementById('feedbackMessage').textContent = feedback;
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            answers = new Array(questions.length).fill(null);
+            document.getElementById('quizContent').classList.remove('hidden');
+            document.getElementById('results').classList.remove('show');
+            displayQuestion();
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>
