@@ -49,15 +49,17 @@
         .question-text {
             font-size: 18px;
             font-weight: 600;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             color: #333;
             line-height: 1.6;
+            min-height: 60px;
         }
         .options {
             display: flex;
             flex-direction: column;
             gap: 12px;
             margin-bottom: 30px;
+            min-height: 280px;
         }
         .option {
             padding: 15px;
@@ -66,20 +68,25 @@
             cursor: pointer;
             transition: all 0.3s ease;
             background: white;
+            display: flex;
+            align-items: center;
         }
         .option:hover {
             border-color: #667eea;
             background: #f5f5f5;
         }
         .option input[type="radio"] {
-            margin-right: 10px;
+            margin-right: 15px;
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
         }
         .option label {
             cursor: pointer;
-            display: flex;
-            align-items: center;
             font-size: 16px;
             color: #555;
+            flex: 1;
+            margin: 0;
         }
         .option.selected {
             border-color: #667eea;
@@ -181,159 +188,159 @@
     <script>
         const questions = [
             {
-                question: "Which of the following best describes 'comorbidity' in the context of mental health disorders?",
+                question: "Which term describes the simultaneous occurrence of two or more distinct mental health disorders in the same individual?",
                 options: [
-                    "The simultaneous occurrence of two or more distinct disorders in the same individual",
-                    "The tendency of mental health disorders to worsen over time without treatment",
-                    "The genetic predisposition to develop multiple personality traits",
-                    "The social stigma associated with being diagnosed with a mental disorder"
+                    "Comorbidity",
+                    "Dysregulation",
+                    "Neurodivergence",
+                    "Psychosomatic"
                 ],
                 correct: 0
             },
             {
-                question: "According to recent research, what percentage of adults in the U.S. experience mental illness annually?",
+                question: "What is the primary characteristic of 'neurodivergence'?",
                 options: [
-                    "Approximately 15-20%",
-                    "Approximately 43% or higher",
-                    "Approximately 5-10%",
-                    "Approximately 60-70%"
+                    "A mental illness requiring medication",
+                    "Variations in the brain's neurological functioning, such as autism or ADHD",
+                    "A temporary condition caused by trauma",
+                    "A personality disorder affecting social interactions"
                 ],
                 correct: 1
             },
             {
-                question: "Which relative clause correctly describes individuals with neurodivergence?",
+                question: "Which relative clause correctly describes individuals with mental health disorders?",
                 options: [
-                    "Individuals which have autism or ADHD are considered neurodivergent.",
-                    "Individuals who have autism or ADHD are considered neurodivergent.",
-                    "Individuals where have autism or ADHD are considered neurodivergent.",
-                    "Individuals that autism or ADHD are considered neurodivergent."
+                    "Individuals which experience anxiety often struggle with daily tasks.",
+                    "Individuals who experience anxiety often struggle with daily tasks.",
+                    "Individuals where experience anxiety often struggle with daily tasks.",
+                    "Individuals that anxiety often struggle with daily tasks."
                 ],
                 correct: 1
             },
             {
-                question: "What is the primary difference between Generalized Anxiety Disorder (GAD) and panic disorder?",
+                question: "What does 'emotional dysregulation' refer to?",
                 options: [
-                    "GAD involves persistent worry, while panic disorder involves sudden, intense episodes of fear",
-                    "Panic disorder is more common in women than GAD",
-                    "GAD only affects adolescents, while panic disorder affects adults",
-                    "There is no significant difference; they are the same condition"
+                    "The inability to control or manage emotional responses appropriately",
+                    "The complete absence of emotional responses",
+                    "The exaggeration of positive emotions only",
+                    "A permanent state of happiness"
                 ],
                 correct: 0
             },
             {
-                question: "Which term describes the reduced ability to regulate emotions, commonly seen in ADHD and autism?",
+                question: "Which term describes the discrimination and negative stereotyping of individuals with mental health disorders?",
                 options: [
-                    "Emotional dysregulation",
-                    "Affective flattening",
-                    "Emotional suppression",
-                    "Mood stabilization"
+                    "Neurodiversity",
+                    "Stigmatization",
+                    "Dysregulation",
+                    "Comorbidity"
                 ],
-                correct: 0
+                correct: 1
             },
             {
-                question: "In which relative clause context would 'whose' be most appropriately used?",
+                question: "How would you correctly use 'whose' in a relative clause about mental health treatment?",
                 options: [
                     "Patients whose symptoms persist for more than two weeks should seek professional help.",
-                    "The therapist which helped me overcome my anxiety was very compassionate.",
-                    "Depression is a condition where people experience persistent sadness.",
-                    "PTSD is a disorder that develops after traumatic experiences."
+                    "The therapist whose helped me was very experienced.",
+                    "Depression is a condition whose people experience constantly.",
+                    "Anxiety is a disorder which occurs in safe spaces."
                 ],
                 correct: 0
             },
             {
-                question: "What is the estimated percentage of children diagnosed with ADHD whose symptoms persist into adulthood?",
+                question: "What is 'psychosomatic' in the context of mental health?",
                 options: [
-                    "Approximately 10-15%",
-                    "Approximately 30-40%",
-                    "Approximately 50-70%",
-                    "Approximately 80-90%"
+                    "A mental illness that only affects the brain",
+                    "Physical symptoms that occur without a clear medical cause, often linked to psychological factors",
+                    "A personality trait that makes someone resistant to stress",
+                    "A type of medication used to treat anxiety"
                 ],
-                correct: 2
+                correct: 1
             },
             {
-                question: "Which of the following is NOT a primary symptom of Obsessive-Compulsive Disorder (OCD)?",
+                question: "Which relative clause correctly describes the relationship between therapy and mental health?",
                 options: [
-                    "Intrusive, unwanted thoughts (obsessions)",
-                    "Repetitive behaviors or mental acts (compulsions)",
-                    "Persistent hallucinations and delusions",
-                    "Significant distress or impairment in functioning"
-                ],
-                correct: 2
-            },
-            {
-                question: "How would you correctly combine these sentences using a relative clause? 'The medication has side effects. It was prescribed for my anxiety.'",
-                options: [
-                    "The medication which was prescribed for my anxiety has side effects.",
-                    "The medication that has side effects was prescribed for my anxiety.",
-                    "The medication where was prescribed for my anxiety has side effects.",
-                    "The medication whose was prescribed for my anxiety has side effects."
+                    "Therapy is a process that helps individuals address psychological challenges.",
+                    "Therapy is a condition where people are born with.",
+                    "Therapy is a syndrome which only works for some people.",
+                    "Therapy is an illness whose causes are purely genetic."
                 ],
                 correct: 0
             },
             {
-                question: "What is the primary distinction between Major Depressive Disorder and Persistent Depressive Disorder (Dysthymia)?",
+                question: "What does 'neurodivergent' mean in simple terms?",
                 options: [
-                    "MDD involves more severe symptoms but shorter duration; Dysthymia is less severe but longer-lasting",
-                    "MDD only affects women; Dysthymia only affects men",
-                    "They are identical conditions with different names",
-                    "MDD is caused by life events; Dysthymia is purely genetic"
+                    "A person with a mental illness",
+                    "A person whose brain works differently, such as those with autism or ADHD",
+                    "A person who is not intelligent",
+                    "A person who needs constant medical supervision"
+                ],
+                correct: 1
+            },
+            {
+                question: "Which statement correctly uses a relative clause about mental health support?",
+                options: [
+                    "Support groups are spaces where people can share their experiences and find community.",
+                    "Support groups are conditions which only help some people.",
+                    "Support groups are disorders that people inherit.",
+                    "Support groups are places that anxiety disappears."
                 ],
                 correct: 0
             },
             {
-                question: "Which term describes the psychological phenomenon where physical symptoms occur without a clear medical cause?",
+                question: "What is the key difference between 'stigma' and 'comorbidity'?",
                 options: [
-                    "Psychosomatic",
-                    "Hypochondria",
-                    "Malingering",
-                    "Somatization"
-                ],
-                correct: 3
-            },
-            {
-                question: "In the context of Bipolar Disorder, what is a 'mixed episode'?",
-                options: [
-                    "When a person experiences both manic and depressive symptoms simultaneously",
-                    "When a person switches rapidly between manic and depressive episodes",
-                    "When a person experiences mild mood changes without extremes",
-                    "When a person has multiple personality disorders at once"
+                    "Stigma is social discrimination; comorbidity is the presence of multiple disorders",
+                    "They are the same thing with different names",
+                    "Stigma is a medical condition; comorbidity is a social issue",
+                    "Stigma only affects wealthy people; comorbidity only affects poor people"
                 ],
                 correct: 0
             },
             {
-                question: "Which relative clause correctly describes the relationship between trauma and PTSD?",
+                question: "How would you correctly combine these sentences using a relative clause? 'Mental health professionals help patients. They provide evidence-based treatment.'",
                 options: [
-                    "PTSD is a disorder that develops after individuals experience or witness traumatic events.",
-                    "PTSD is a condition which people are born with from childhood.",
-                    "PTSD is a syndrome where only combat veterans can develop.",
-                    "PTSD is an illness whose causes are purely genetic."
+                    "Mental health professionals who provide evidence-based treatment help patients.",
+                    "Mental health professionals which provide evidence-based treatment help patients.",
+                    "Mental health professionals where provide evidence-based treatment help patients.",
+                    "Mental health professionals that help patients provide evidence-based treatment."
                 ],
                 correct: 0
             },
             {
-                question: "What percentage of individuals with Autism Spectrum Disorder (ASD) also experience anxiety or depression?",
+                question: "What does 'dysregulation' specifically refer to in mental health contexts?",
                 options: [
-                    "Approximately 10-15%",
-                    "Approximately 30-40%",
-                    "Approximately 50-80%",
-                    "Approximately 90%+"
+                    "The ability to control emotions effectively",
+                    "The inability to regulate emotions, behaviors, or impulses appropriately",
+                    "A permanent improvement in mental health",
+                    "A type of medication used to treat depression"
                 ],
-                correct: 2
+                correct: 1
             },
             {
-                question: "Which of the following best defines 'stigmatization' in mental health contexts?",
+                question: "Which relative clause correctly describes therapy?",
                 options: [
-                    "The discrimination and negative stereotyping of individuals with mental health disorders",
-                    "The medical treatment of mental health conditions with medication",
-                    "The genetic inheritance of mental health disorders",
-                    "The temporary nature of most mental health conditions"
+                    "Therapy is a process whose goal is to help individuals improve their mental health.",
+                    "Therapy is a condition that people are born with.",
+                    "Therapy is a disorder where people inherit.",
+                    "Therapy is an illness which only affects young people."
                 ],
                 correct: 0
             },
             {
-                question: "How would you correctly use 'where' in a relative clause about mental health treatment?",
+                question: "What is the relationship between 'neurodivergence' and 'mental illness'?",
                 options: [
-                    "Therapy provides a safe space where individuals can process their emotions.",
+                    "They are the same thing",
+                    "Neurodivergence refers to differences in brain functioning; mental illness refers to conditions causing distress or dysfunction",
+                    "Neurodivergence is more serious than mental illness",
+                    "Mental illness is a type of neurodivergence"
+                ],
+                correct: 1
+            },
+            {
+                question: "How would you use 'where' in a relative clause about mental health support?",
+                options: [
+                    "Therapy provides a safe space where individuals can express their feelings without judgment.",
                     "The therapist where helped me was very experienced.",
                     "Depression is a condition where people experience it constantly.",
                     "Anxiety is a disorder which occurs in safe spaces."
@@ -341,52 +348,53 @@
                 correct: 0
             },
             {
-                question: "What is the primary neurotransmitter implicated in Major Depressive Disorder?",
+                question: "What does 'comorbidity' mean in mental health?",
                 options: [
-                    "Serotonin",
-                    "Dopamine",
-                    "Acetylcholine",
-                    "Glutamate"
-                ],
-                correct: 0
-            },
-            {
-                question: "Which statement correctly uses a relative clause to describe individuals with eating disorders?",
-                options: [
-                    "Individuals whose eating behaviors are severely restricted often experience malnutrition.",
-                    "Individuals which have eating disorders are always underweight.",
-                    "Eating disorders are conditions where only teenagers develop.",
-                    "People that eating disorders need immediate hospitalization."
-                ],
-                correct: 0
-            },
-            {
-                question: "In the DSM-5, what is the minimum duration of symptoms required for a diagnosis of Major Depressive Disorder?",
-                options: [
-                    "At least 1 week",
-                    "At least 2 weeks",
-                    "At least 1 month",
-                    "At least 3 months"
+                    "The cure for mental illness",
+                    "The simultaneous presence of two or more mental health disorders in one person",
+                    "A type of therapy used to treat anxiety",
+                    "A genetic predisposition to mental illness"
                 ],
                 correct: 1
             },
             {
-                question: "Which of the following is a key difference between Social Anxiety Disorder and Shyness?",
+                question: "Which term best describes negative attitudes and beliefs about people with mental health disorders?",
                 options: [
-                    "SAD involves intense fear and avoidance that significantly impairs functioning; shyness is a personality trait",
-                    "Shyness is more severe than SAD",
-                    "SAD only affects extroverts; shyness only affects introverts",
-                    "There is no meaningful difference between the two"
+                    "Neurodiversity",
+                    "Dysregulation",
+                    "Stigmatization",
+                    "Psychosomatic"
+                ],
+                correct: 2
+            },
+            {
+                question: "How would you correctly rewrite this sentence using a relative clause? 'Mental health is important. It affects our overall well-being.'",
+                options: [
+                    "Mental health, which affects our overall well-being, is important.",
+                    "Mental health is important that affects our overall well-being.",
+                    "Mental health is important where affects our overall well-being.",
+                    "Mental health is important whose affects our overall well-being."
                 ],
                 correct: 0
+            },
+            {
+                question: "What is the primary focus of understanding mental health disorders in an educational context?",
+                options: [
+                    "To diagnose and treat disorders",
+                    "To reduce stigma and increase awareness and compassion",
+                    "To determine who is mentally ill",
+                    "To prove that mental illness is not real"
+                ],
+                correct: 1
             }
         ];
 
         let currentQuestion = 0;
         let answers = new Array(questions.length).fill(null);
+        let shuffledQuestions = [];
 
-        function shuffleArray(array) {
-            const shuffled = [...array];
+        function shuffleOptions(options) {
+            const shuffled = [...options];
             for (let i = shuffled.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
@@ -396,9 +404,7 @@
 
         function displayQuestion() {
             const question = questions[currentQuestion];
-            const shuffledOptions = shuffleArray(question.options);
-            
-            // Find the correct answer index in shuffled array
+            const shuffledOptions = shuffleOptions(question.options);
             const correctIndex = shuffledOptions.indexOf(question.options[question.correct]);
             
             document.getElementById('questionNumber').textContent = `Question ${currentQuestion + 1} of ${questions.length}`;
@@ -410,16 +416,16 @@
             shuffledOptions.forEach((option, index) => {
                 const optionDiv = document.createElement('div');
                 optionDiv.className = 'option';
-                optionDiv.innerHTML = `
-                    <label>
-                        <input type="radio" name="answer" value="${index}" ${answers[currentQuestion] === index ? 'checked' : ''}>
-                        ${option}
-                    </label>
-                `;
-                optionDiv.onclick = () => selectOption(index);
                 if (answers[currentQuestion] === index) {
                     optionDiv.classList.add('selected');
                 }
+                
+                optionDiv.innerHTML = `
+                    <input type="radio" id="option${index}" name="answer" value="${index}" ${answers[currentQuestion] === index ? 'checked' : ''}>
+                    <label for="option${index}">${option}</label>
+                `;
+                
+                optionDiv.onclick = () => selectOption(index);
                 optionsContainer.appendChild(optionDiv);
             });
             
@@ -461,7 +467,7 @@
         function showResults() {
             let score = 0;
             answers.forEach((answer, index) => {
-                const shuffledOptions = shuffleArray(questions[index].options);
+                const shuffledOptions = shuffleOptions(questions[index].options);
                 const correctIndex = shuffledOptions.indexOf(questions[index].options[questions[index].correct]);
                 if (answer === correctIndex) {
                     score++;
