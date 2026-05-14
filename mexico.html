@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mexico Quiz - Grammar Focus</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #006847 0%, #CE1126 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 4px solid #006847;
+            padding-bottom: 20px;
+        }
+        .header h1 {
+            color: #CE1126;
+            font-size: 32px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #006847, #F2A900, #CE1126);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .question-container {
+            margin-bottom: 30px;
+        }
+        .question-number {
+            color: #CE1126;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .question-text {
+            color: #333;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .option {
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f9f9f9;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+        }
+        .option:hover {
+            border-color: #006847;
+            background: #f0f8f5;
+        }
+        .option.selected {
+            border-color: #CE1126;
+            background: #ffe8e8;
+        }
+        .option.correct {
+            border-color: #006847;
+            background: #e8f5e9;
+        }
+        .option.incorrect {
+            border-color: #CE1126;
+            background: #ffebee;
+        }
+        .option-letter {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: #006847;
+            color: white;
+            text-align: center;
+            line-height: 30px;
+            border-radius: 50%;
+            margin-right: 15px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        .option.selected .option-letter {
+            background: #CE1126;
+        }
+        .option-text {
+            flex: 1;
+            color: #333;
+        }
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-prev {
+            background: #ddd;
+            color: #333;
+        }
+        .btn-prev:hover:not(:disabled) {
+            background: #bbb;
+        }
+        .btn-next {
+            background: #006847;
+            color: white;
+            flex: 1;
+        }
+        .btn-next:hover:not(:disabled) {
+            background: #004d32;
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .results {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .results h2 {
+            color: #CE1126;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        .score-display {
+            font-size: 48px;
+            font-weight: bold;
+            color: #006847;
+            margin: 20px 0;
+        }
+        .feedback {
+            font-size: 18px;
+            color: #666;
+            margin: 20px 0;
+            line-height: 1.6;
+        }
+        .btn-restart {
+            background: #CE1126;
+            color: white;
+            padding: 15px 40px;
+            margin-top: 20px;
+        }
+        .btn-restart:hover {
+            background: #a00d1a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Mexico Quiz</h1>
+            <p>Grammar Focus: Present Perfect vs Simple Past</p>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div id="quizContainer"></div>
+        <div id="resultsContainer" style="display: none;"></div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "Mexico _____ one of the world's largest economies for centuries.",
+                options: ["has been", "was", "has", "is being"],
+                correct: 1,
+                explanation: "Simple Past is used for completed actions in the past."
+            },
+            {
+                question: "The Aztec civilization _____ Tenochtitlan, which is now Mexico City.",
+                options: ["has founded", "founded", "has been founding", "is founding"],
+                correct: 1,
+                explanation: "Simple Past describes a completed historical event."
+            },
+            {
+                question: "Mexican cuisine _____ recognized as UNESCO Intangible Cultural Heritage since 2010.",
+                options: ["was", "has been", "is", "had been"],
+                correct: 1,
+                explanation: "Present Perfect is used for actions that started in the past and continue to the present."
+            },
+            {
+                question: "The Day of the Dead tradition _____ in Mexico for over 3,000 years.",
+                options: ["exists", "has existed", "existed", "is existing"],
+                correct: 1,
+                explanation: "Present Perfect shows an action that started long ago and is still relevant."
+            },
+            {
+                question: "Frida Kahlo _____ one of Mexico's most famous artists before she died in 1954.",
+                options: ["has been", "was", "has become", "is"],
+                correct: 1,
+                explanation: "Simple Past is used for completed actions in someone's life."
+            },
+            {
+                question: "Mexico _____ independence from Spain in 1821.",
+                options: ["has gained", "gained", "has been gaining", "gains"],
+                correct: 1,
+                explanation: "Simple Past describes a specific historical event with a definite time."
+            },
+            {
+                question: "The Mexican flag _____ the same colors since 1968.",
+                options: ["has had", "had", "has", "is having"],
+                correct: 0,
+                explanation: "Present Perfect is used for something that started in the past and continues."
+            },
+            {
+                question: "Chocolate _____ in Mexico by the Aztecs long before Europeans arrived.",
+                options: ["has been discovered", "was discovered", "discovered", "has discovered"],
+                correct: 1,
+                explanation: "Passive Simple Past describes a historical discovery."
+            },
+            {
+                question: "Mexico City _____ the world's largest metropolitan area for many years.",
+                options: ["has been", "was", "is being", "has become"],
+                correct: 0,
+                explanation: "Present Perfect Continuous shows an action that started in the past and continues."
+            },
+            {
+                question: "The Mayan ruins _____ tourists from all over the world since their discovery.",
+                options: ["attract", "have attracted", "attracted", "are attracting"],
+                correct: 1,
+                explanation: "Present Perfect shows an action that started in the past and continues to attract."
+            },
+            {
+                question: "Mexico _____ a member of the United Nations since 1945.",
+                options: ["has been", "was", "is", "became"],
+                correct: 0,
+                explanation: "Present Perfect is used for a state that started in the past and continues."
+            },
+            {
+                question: "The Spanish conquest of Mexico _____ in 1519 and _____ for about two years.",
+                options: ["began / lasted", "has begun / has lasted", "begins / lasts", "has begun / lasted"],
+                correct: 0,
+                explanation: "Simple Past is used for completed historical events."
+            },
+            {
+                question: "Mexican music _____ influenced by indigenous, Spanish, and African traditions.",
+                options: ["has been", "was", "is", "has become"],
+                correct: 0,
+                explanation: "Present Perfect Passive shows an ongoing influence from the past."
+            },
+            {
+                question: "Hernán Cortés _____ Mexico in 1519, and his actions _____ the course of history.",
+                options: ["arrived / changed", "has arrived / has changed", "arrives / changes", "has arrived / changed"],
+                correct: 0,
+                explanation: "Simple Past is used for both completed historical actions."
+            },
+            {
+                question: "The heritage of Mexico _____ preserved through its museums and cultural sites.",
+                options: ["has been", "was", "is being", "had been"],
+                correct: 0,
+                explanation: "Present Perfect Passive shows an ongoing preservation effort."
+            },
+            {
+                question: "Mexico _____ the world's largest producer of silver for over 400 years.",
+                options: ["has been", "was", "is", "has become"],
+                correct: 0,
+                explanation: "Present Perfect shows a long-term status that continues."
+            },
+            {
+                question: "The tournament in Mexico _____ many international competitors every year.",
+                options: ["has attracted", "attracted", "attracts", "has been attracting"],
+                correct: 2,
+                explanation: "Simple Present is used for habitual or recurring actions."
+            },
+            {
+                question: "Mexican passion for football _____ evident since the sport _____ in the country.",
+                options: ["has been / arrived", "was / has arrived", "is / arrived", "has been / has arrived"],
+                correct: 2,
+                explanation: "Present Perfect shows when the sport arrived, and Simple Present describes the ongoing passion."
+            },
+            {
+                question: "The cuisine of Mexico _____ influenced by indigenous ingredients that _____ cultivated for millennia.",
+                options: ["has been / have been", "was / were", "is / are", "has been / were"],
+                correct: 0,
+                explanation: "Present Perfect Passive shows ongoing influence from ancient cultivation."
+            },
+            {
+                question: "Mexico's economy _____ significantly since the country _____ NAFTA in 1994.",
+                options: ["has grown / joined", "grew / has joined", "grows / joined", "has been growing / has joined"],
+                correct: 0,
+                explanation: "Present Perfect shows growth from 1994 to now, Simple Past shows when NAFTA was joined."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let answered = new Array(questions.length).fill(null);
+
+        function renderQuestion() {
+            const container = document.getElementById('quizContainer');
+            const q = questions[currentQuestion];
+            
+            let html = `
+                <div class="question-container">
+                    <div class="question-number">Question ${currentQuestion + 1} of ${questions.length}</div>
+                    <div class="question-text">${q.question}</div>
+                    <div class="options">
+            `;
+            
+            q.options.forEach((option, index) => {
+                const selected = answered[currentQuestion] === index ? 'selected' : '';
+                html += `
+                    <div class="option ${selected}" onclick="selectOption(${index})">
+                        <span class="option-letter">${String.fromCharCode(65 + index)}</span>
+                        <span class="option-text">${option}</span>
+                    </div>
+                `;
+            });
+            
+            html += `
+                    </div>
+                </div>
+                <div class="navigation">
+                    <button class="btn-prev" onclick="prevQuestion()" ${currentQuestion === 0 ? 'disabled' : ''}>PREVIOUS</button>
+                    <button class="btn-next" onclick="nextQuestion()">${currentQuestion === questions.length - 1 ? 'FINISH' : 'NEXT'}</button>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+            updateProgress();
+        }
+
+        function selectOption(index) {
+            answered[currentQuestion] = index;
+            renderQuestion();
+        }
+
+        function nextQuestion() {
+            if (answered[currentQuestion] === null) {
+                alert('Please select an answer before proceeding.');
+                return;
+            }
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                renderQuestion();
+            } else {
+                calculateScore();
+                showResults();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                renderQuestion();
+            }
+        }
+
+        function calculateScore() {
+            score = 0;
+            answered.forEach((answer, index) => {
+                if (answer === questions[index].correct) {
+                    score++;
+                }
+            });
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function showResults() {
+            const quizContainer = document.getElementById('quizContainer');
+            const resultsContainer = document.getElementById('resultsContainer');
+            
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            
+            const percentage = Math.round((score / questions.length) * 100);
+            let feedback = '';
+            
+            if (percentage >= 90) {
+                feedback = 'Excellent! You have mastered Present Perfect and Simple Past!';
+            } else if (percentage >= 75) {
+                feedback = 'Great! You have a strong understanding of the grammar.';
+            } else if (percentage >= 60) {
+                feedback = 'Good! Keep practicing to improve your grammar skills.';
+            } else {
+                feedback = 'Keep studying to master this grammar topic.';
+            }
+            
+            let html = `
+                <div class="results">
+                    <h2>Quiz Complete!</h2>
+                    <div class="score-display">${score}/${questions.length}</div>
+                    <div style="font-size: 24px; color: #006847; margin-bottom: 20px;">${percentage}%</div>
+                    <div class="feedback">${feedback}</div>
+                    <button class="btn-restart" onclick="location.reload()">RETAKE QUIZ</button>
+                </div>
+            `;
+            
+            resultsContainer.innerHTML = html;
+        }
+
+        // Initialize
+        renderQuestion();
+    </script>
+</body>
+</html>
