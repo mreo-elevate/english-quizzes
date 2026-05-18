@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>USA Quiz - Vocabulary & Customary System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0A3161 0%, #B31942 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 4px solid #0A3161;
+            padding-bottom: 20px;
+        }
+        .header h1 {
+            color: #B31942;
+            font-size: 32px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0A3161, #FFD700, #B31942);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .question-container {
+            margin-bottom: 30px;
+        }
+        .question-number {
+            color: #B31942;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .question-text {
+            color: #333;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .option {
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f9f9f9;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+        }
+        .option:hover {
+            border-color: #0A3161;
+            background: #f0f4f8;
+        }
+        .option.selected {
+            border-color: #B31942;
+            background: #ffe8e8;
+        }
+        .option.correct {
+            border-color: #0A3161;
+            background: #e8f0fe;
+        }
+        .option.incorrect {
+            border-color: #B31942;
+            background: #ffebee;
+        }
+        .option-letter {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: #0A3161;
+            color: white;
+            text-align: center;
+            line-height: 30px;
+            border-radius: 50%;
+            margin-right: 15px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        .option.selected .option-letter {
+            background: #B31942;
+        }
+        .option-text {
+            flex: 1;
+            color: #333;
+        }
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-prev {
+            background: #ddd;
+            color: #333;
+        }
+        .btn-prev:hover:not(:disabled) {
+            background: #bbb;
+        }
+        .btn-next {
+            background: #0A3161;
+            color: white;
+            flex: 1;
+        }
+        .btn-next:hover:not(:disabled) {
+            background: #051d3b;
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .results {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .results h2 {
+            color: #B31942;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        .score-display {
+            font-size: 48px;
+            font-weight: bold;
+            color: #0A3161;
+            margin: 20px 0;
+        }
+        .feedback {
+            font-size: 18px;
+            color: #666;
+            margin: 20px 0;
+            line-height: 1.6;
+        }
+        .btn-restart {
+            background: #B31942;
+            color: white;
+            padding: 15px 40px;
+            margin-top: 20px;
+        }
+        .btn-restart:hover {
+            background: #a00d1a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>USA Quiz</h1>
+            <p>Vocabulary & The US Customary System</p>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div id="quizContainer"></div>
+        <div id="resultsContainer" style="display: none;"></div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "If a recipe calls for 1 cup (8 fl oz) of milk, how many milliliters is that approximately?",
+                options: ["100 ml", "240 ml", "500 ml"],
+                correct: 1,
+                explanation: "1 fluid ounce is roughly 30 ml, so 8 fl oz is about 240 ml."
+            },
+            {
+                question: "The US is described as a 'melting pot' because:",
+                options: ["It mixes different cultures", "It has a hot climate", "It produces a lot of steel"],
+                correct: 0,
+                explanation: "A melting pot refers to a society where many different types of people blend together as one."
+            },
+            {
+                question: "If the speed limit is 55 mph, what is it in km/h?",
+                options: ["55 km/h", "75 km/h", "88 km/h"],
+                correct: 2,
+                explanation: "Multiply miles by 1.61 to get kilometers (55 x 1.61 = 88.55)."
+            },
+            {
+                question: "A person who organizes and operates a business is an:",
+                options: ["Employee", "Entrepreneur", "Educator"],
+                correct: 1,
+                explanation: "An entrepreneur is someone who starts their own business."
+            },
+            {
+                question: "If a baby weighs 7 pounds, how many kilograms is that?",
+                options: ["7 kg", "5 kg", "3.1 kg"],
+                correct: 2,
+                explanation: "Divide pounds by 2.2 to get kilograms (7 / 2.2 = 3.18)."
+            },
+            {
+                question: "A 'blockbuster' is typically:",
+                options: ["A highly successful movie", "A type of building", "A military weapon"],
+                correct: 0,
+                explanation: "A blockbuster is a work of entertainment that is highly successful commercially."
+            },
+            {
+                question: "If it's 32°F outside, what should you wear?",
+                options: ["A swimsuit", "A heavy winter coat", "A light jacket"],
+                correct: 1,
+                explanation: "32°F is 0°C, the freezing point of water."
+            },
+            {
+                question: "An 'amendment' to the Constitution is a:",
+                options: ["Deletion", "Rejection", "Change or addition"],
+                correct: 2,
+                explanation: "An amendment is a formal or official change made to a law or constitution."
+            },
+            {
+                question: "A 5K run is 5 kilometers. How many miles is that?",
+                options: ["3.1 miles", "5 miles", "8 miles"],
+                correct: 0,
+                explanation: "Divide kilometers by 1.61 to get miles (5 / 1.61 = 3.1)."
+            },
+            {
+                question: "Someone who is among the first to explore a new area is a:",
+                options: ["Follower", "Pioneer", "Tourist"],
+                correct: 1,
+                explanation: "A pioneer is a person who is among the first to explore or settle a new country or area."
+            },
+            {
+                question: "If you buy 2 gallons of milk, how many liters do you have?",
+                options: ["2 liters", "4 liters", "7.5 liters"],
+                correct: 2,
+                explanation: "1 gallon is approximately 3.78 liters (2 x 3.78 = 7.56)."
+            },
+            {
+                question: "A 'milestone' represents:",
+                options: ["A significant event", "A type of rock", "A distance measurement"],
+                correct: 0,
+                explanation: "A milestone is an action or event marking a significant change or stage in development."
+            },
+            {
+                question: "If someone is 6 feet tall, they are approximately:",
+                options: ["1.50 meters", "1.83 meters", "2.10 meters"],
+                correct: 1,
+                explanation: "1 foot is 0.3048 meters (6 x 0.3048 = 1.8288)."
+            },
+            {
+                question: "The introduction of a new method or idea is called:",
+                options: ["Tradition", "Imitation", "Innovation"],
+                correct: 2,
+                explanation: "Innovation refers to the action or process of innovating, such as a new method or idea."
+            },
+            {
+                question: "If a steak weighs 8 ounces, how many grams is it?",
+                options: ["226 grams", "150 grams", "400 grams"],
+                correct: 0,
+                explanation: "1 ounce is 28.35 grams (8 x 28.35 = 226.8)."
+            },
+            {
+                question: "The 'Constitution' is the fundamental principles that:",
+                options: ["Organize a business", "Govern a state", "Define a language"],
+                correct: 1,
+                explanation: "A constitution is a body of fundamental principles according to which a state is governed."
+            },
+            {
+                question: "If the thermostat is set to 72°F, the room is:",
+                options: ["Freezing", "Boiling hot", "Comfortable (room temp)"],
+                correct: 2,
+                explanation: "72°F is approximately 22°C, which is considered a comfortable room temperature."
+            },
+            {
+                question: "A football field is 100 yards long. In meters, this is:",
+                options: ["91 meters", "100 meters", "110 meters"],
+                correct: 0,
+                explanation: "1 yard is 0.9144 meters (100 x 0.9144 = 91.44)."
+            },
+            {
+                question: "Which of these is NOT a US customary unit?",
+                options: ["Ounce", "Liter", "Pint"],
+                correct: 1,
+                explanation: "A liter is a metric unit of volume, not a US customary unit."
+            },
+            {
+                question: "To roughly convert Fahrenheit to Celsius, you can:",
+                options: ["Add 30 and multiply by 2", "Divide by 2", "Subtract 30 and divide by 2"],
+                correct: 2,
+                explanation: "A quick mental trick to convert Fahrenheit to Celsius is to subtract 30 and then divide by 2."
+            }
+        ];
+
+        // Randomize questions and their options
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // Shuffle options but keep track of correct answer
+        questions.forEach(q => {
+            const optionsWithIndex = q.options.map((opt, idx) => ({ text: opt, isCorrect: idx === q.correct }));
+            shuffleArray(optionsWithIndex);
+            q.options = optionsWithIndex.map(opt => opt.text);
+            q.correct = optionsWithIndex.findIndex(opt => opt.isCorrect);
+        });
+
+        let currentQuestion = 0;
+        let score = 0;
+        let userAnswers = new Array(questions.length).fill(null);
+        let quizCompleted = false;
+
+        const quizContainer = document.getElementById('quizContainer');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const progressFill = document.getElementById('progressFill');
+
+        function renderQuestion() {
+            const q = questions[currentQuestion];
+            const progress = ((currentQuestion) / questions.length) * 100;
+            progressFill.style.width = `${progress}%`;
+
+            const letters = ['A', 'B', 'C', 'D'];
+            
+            let html = `
+                <div class="question-container">
+                    <div class="question-number">Question ${currentQuestion + 1} of ${questions.length}</div>
+                    <div class="question-text">${q.question}</div>
+                    <div class="options">
+                        ${q.options.map((opt, idx) => `
+                            <div class="option ${userAnswers[currentQuestion] === idx ? 'selected' : ''}" 
+                                 onclick="selectOption(${idx})">
+                                <span class="option-letter">${letters[idx]}</span>
+                                <span class="option-text">${opt}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                <div class="navigation">
+                    <button class="btn-prev" onclick="prevQuestion()" ${currentQuestion === 0 ? 'disabled' : ''}>Previous</button>
+                    <button class="btn-next" onclick="nextQuestion()" ${userAnswers[currentQuestion] === null ? 'disabled' : ''}>
+                        ${currentQuestion === questions.length - 1 ? 'Finish Quiz' : 'Next'}
+                    </button>
+                </div>
+            `;
+            quizContainer.innerHTML = html;
+        }
+
+        function selectOption(idx) {
+            if (quizCompleted) return;
+            userAnswers[currentQuestion] = idx;
+            renderQuestion();
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                renderQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                renderQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function finishQuiz() {
+            quizCompleted = true;
+            progressFill.style.width = '100%';
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+
+            score = userAnswers.reduce((acc, curr, idx) => {
+                return acc + (curr === questions[idx].correct ? 1 : 0);
+            }, 0);
+
+            const percentage = Math.round((score / questions.length) * 100);
+            let feedbackMsg = '';
+            
+            if (percentage >= 90) feedbackMsg = 'Excellent! You have a great understanding of the US Customary System and vocabulary.';
+            else if (percentage >= 70) feedbackMsg = 'Good job! You know most of the conversions and vocabulary words.';
+            else if (percentage >= 50) feedbackMsg = 'Not bad, but you might need a little more practice with conversions.';
+            else feedbackMsg = 'You should review the lesson materials on the US Customary System and try again.';
+
+            resultsContainer.innerHTML = `
+                <div class="results">
+                    <h2>Quiz Completed!</h2>
+                    <div class="score-display">${score} / ${questions.length}</div>
+                    <div class="feedback">${feedbackMsg}</div>
+                    <button class="btn-restart" onclick="location.reload()">Restart Quiz</button>
+                </div>
+            `;
+        }
+
+        // Start quiz
+        renderQuestion();
+    </script>
+</body>
+</html>
