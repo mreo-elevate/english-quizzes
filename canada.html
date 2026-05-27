@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canada Quiz: Culture & French Loanwords</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF0000; /* Canadian Red */
+            --secondary: #1F4E78; /* Navy Blue */
+            --accent: #FFD700; /* Gold */
+            --bg-color: #F8F9FA;
+            --text-color: #333333;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .header {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 8px solid var(--accent);
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            font-weight: 700;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px 60px;
+        }
+
+        .progress-container {
+            background-color: var(--white);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+        }
+
+        .progress-text {
+            font-weight: 700;
+            color: var(--secondary);
+            font-size: 1.1rem;
+        }
+
+        .progress-bar-bg {
+            flex-grow: 1;
+            height: 12px;
+            background-color: #E0E0E0;
+            border-radius: 6px;
+            margin: 0 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background-color: var(--primary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .score-display {
+            font-weight: 900;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .quiz-section {
+            background-color: var(--white);
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+            display: none;
+            border-top: 6px solid var(--secondary);
+        }
+
+        .quiz-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .question-number {
+            background-color: var(--secondary);
+            color: var(--white);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 900;
+            font-size: 1.2rem;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .question-text {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--secondary);
+        }
+
+        .options-grid {
+            display: grid;
+            gap: 15px;
+        }
+
+        .option-btn {
+            background-color: #F5F7FA;
+            border: 2px solid #E4E7EB;
+            border-radius: 10px;
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            display: flex;
+            align-items: center;
+        }
+
+        .option-btn:hover {
+            background-color: #E8F0FE;
+            border-color: var(--secondary);
+        }
+
+        .option-btn.selected {
+            background-color: var(--secondary);
+            color: var(--white);
+            border-color: var(--secondary);
+        }
+
+        .option-btn.correct {
+            background-color: #4CAF50;
+            color: var(--white);
+            border-color: #4CAF50;
+        }
+
+        .option-btn.incorrect {
+            background-color: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+
+        .option-letter {
+            font-weight: 900;
+            margin-right: 15px;
+            color: var(--secondary);
+            background-color: var(--white);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .option-btn.selected .option-letter,
+        .option-btn.correct .option-letter,
+        .option-btn.incorrect .option-letter {
+            color: var(--text-color);
+        }
+
+        .feedback-box {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            display: none;
+        }
+
+        .feedback-box.correct {
+            display: block;
+            background-color: #E8F5E9;
+            color: #2E7D32;
+            border-left: 5px solid #4CAF50;
+        }
+
+        .feedback-box.incorrect {
+            display: block;
+            background-color: #FFEBEE;
+            color: #C62828;
+            border-left: 5px solid var(--primary);
+        }
+
+        .explanation {
+            margin-top: 10px;
+            font-weight: 400;
+            font-size: 1rem;
+            color: var(--text-color);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: #D32F2F;
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:disabled {
+            background-color: #CCCCCC;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .results-section {
+            text-align: center;
+            background-color: var(--white);
+            border-radius: 15px;
+            padding: 60px 40px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            display: none;
+            border-top: 8px solid var(--primary);
+        }
+
+        .results-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+        }
+
+        .results-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--secondary);
+            margin-bottom: 15px;
+        }
+
+        .results-score {
+            font-size: 4rem;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .results-message {
+            font-size: 1.3rem;
+            color: var(--text-color);
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        /* Fill-in-the-blank styles */
+        .fill-blank-container {
+            margin-bottom: 25px;
+        }
+
+        .sentence {
+            font-size: 1.4rem;
+            line-height: 1.8;
+            color: var(--secondary);
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .blank-input {
+            border: none;
+            border-bottom: 3px solid var(--secondary);
+            background: transparent;
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: var(--primary);
+            width: 200px;
+            text-align: center;
+            padding: 5px;
+            outline: none;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .blank-input:focus {
+            border-bottom-color: var(--primary);
+        }
+
+        .blank-input.correct {
+            border-bottom-color: #4CAF50;
+            color: #4CAF50;
+        }
+
+        .blank-input.incorrect {
+            border-bottom-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .word-bank {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #F5F7FA;
+            border-radius: 10px;
+            border-left: 5px solid var(--accent);
+        }
+
+        .word-bank-title {
+            width: 100%;
+            font-weight: 900;
+            color: var(--secondary);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .word-tag {
+            background-color: var(--white);
+            border: 2px solid #E4E7EB;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 700;
+            color: var(--secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .word-tag:hover {
+            background-color: var(--secondary);
+            color: var(--white);
+            border-color: var(--secondary);
+        }
+
+        .word-tag.used {
+            opacity: 0.5;
+            cursor: not-allowed;
+            text-decoration: line-through;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2rem; }
+            .quiz-section { padding: 25px; }
+            .question-text { font-size: 1.2rem; }
+            .sentence { font-size: 1.2rem; }
+            .blank-input { font-size: 1.2rem; width: 150px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Canada Quiz</h1>
+        <p>Culture, Geography & French Loanwords</p>
+    </div>
+
+    <div class="container">
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-text">Question <span id="currentQNum">1</span> of 20</div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progressBar"></div>
+            </div>
+            <div class="score-display">Score: <span id="scoreDisplay">0</span></div>
+        </div>
+
+        <div id="quizContainer">
+            <!-- Questions will be injected here by JS -->
+        </div>
+
+        <div class="results-section" id="resultsSection">
+            <div class="results-icon" id="resultsIcon">🍁</div>
+            <div class="results-title" id="resultsTitle">Quiz Complete!</div>
+            <div class="results-score"><span id="finalScore">0</span> / 20</div>
+            <div class="results-message" id="resultsMessage">Great job! You've completed the Canada lesson quiz.</div>
+            <button class="btn btn-primary" onclick="location.reload()">Try Again</button>
+            <br>
+            <a href="index.html" class="back-link">← Back to All Quizzes</a>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                type: "mcq",
+                question: "What is the capital city of Canada?",
+                options: ["Toronto", "Ottawa", "Vancouver", "Montreal"],
+                answer: 1,
+                explanation: "Ottawa is the capital of Canada, located in the province of Ontario."
+            },
+            {
+                type: "mcq",
+                question: "Which two languages are the official languages of Canada?",
+                options: ["English & Spanish", "French & Indigenous", "English & French", "English & German"],
+                answer: 2,
+                explanation: "English and French have equal status in federal courts, parliament, and all federal institutions across Canada."
+            },
+            {
+                type: "mcq",
+                question: "What is a 'toque'?",
+                options: ["A winter hat", "A type of coffee", "A Canadian coin", "A traditional dance"],
+                answer: 0,
+                explanation: "A toque is a knitted winter hat, often with a pompom on top. It's an essential item for Canadian winters!"
+            },
+            {
+                type: "mcq",
+                question: "Which of the following is a French loanword meaning 'a small restaurant'?",
+                options: ["Boutique", "Bureau", "Café", "Rendezvous"],
+                answer: 2,
+                explanation: "A café is a small restaurant selling light meals and drinks, a term borrowed directly from French."
+            },
+            {
+                type: "mcq",
+                question: "What is the Canadian $1 coin commonly called?",
+                options: ["Toonie", "Loonie", "Quarter", "Buck"],
+                answer: 1,
+                explanation: "It's called a Loonie because it features an image of a loon (a Canadian water bird) on one side."
+            },
+            {
+                type: "mcq",
+                question: "Which of these is a famous Canadian dish originating from Quebec?",
+                options: ["Poutine", "Tacos", "Sushi", "Paella"],
+                answer: 0,
+                explanation: "Poutine consists of french fries topped with fresh cheese curds and smothered in hot, savory brown gravy."
+            },
+            {
+                type: "mcq",
+                question: "What is the official national summer sport of Canada?",
+                options: ["Curling", "Ice Hockey", "Lacrosse", "Baseball"],
+                answer: 2,
+                explanation: "While ice hockey is the national winter sport, lacrosse (which has deep Indigenous roots) is the official summer sport."
+            },
+            {
+                type: "mcq",
+                question: "What does the Canadian slang term 'double-double' refer to?",
+                options: ["A type of burger", "A two-dollar coin", "A hockey penalty", "A coffee with 2 creams and 2 sugars"],
+                answer: 3,
+                explanation: "A 'double-double' is a coffee with two creams and two sugars, popularized by the famous Canadian coffee chain, Tim Hortons."
+            },
+            {
+                type: "mcq",
+                question: "Which historical event brought thousands of French words into the English language?",
+                options: ["The American Revolution", "The Norman Conquest", "The French Revolution", "The Renaissance"],
+                answer: 1,
+                explanation: "The Norman Conquest of 1066 brought French-speaking Normans to England, making French the language of the elite and heavily influencing English vocabulary."
+            },
+            {
+                type: "mcq",
+                question: "What is the meaning of the French loanword 'boutique'?",
+                options: ["A large supermarket", "A government office", "A small store selling fashionable clothes", "A type of dessert"],
+                answer: 2,
+                explanation: "A boutique is a small store that sells stylish clothing, jewelry, or other usually luxury goods."
+            },
+            {
+                type: "mcq",
+                question: "Which Canadian province is the only one where French is the sole official language?",
+                options: ["Ontario", "British Columbia", "Quebec", "New Brunswick"],
+                answer: 2,
+                explanation: "Quebec is the only province with French as its sole official language. New Brunswick is the only officially bilingual province."
+            },
+            {
+                type: "mcq",
+                question: "What does the French loanword 'chic' mean?",
+                options: ["Cheap", "Stylishly fashionable", "Old-fashioned", "Expensive"],
+                answer: 1,
+                explanation: "'Chic' means elegantly and stylishly fashionable."
+            },
+            {
+                type: "mcq",
+                question: "Which term refers to a brief account of a person's education and experience used for job applications?",
+                options: ["Bureau", "Ensemble", "Résumé", "Liaison"],
+                answer: 2,
+                explanation: "A résumé is a document created and used by a person to present their background, skills, and accomplishments."
+            },
+            {
+                type: "mcq",
+                question: "What is the meaning of 'déjà vu'?",
+                options: ["A new experience", "A type of coffee", "A feeling of having experienced something before", "A farewell greeting"],
+                answer: 2,
+                explanation: "Déjà vu translates literally to 'already seen' and describes the strange feeling that you have already experienced what is happening right now."
+            },
+            {
+                type: "mcq",
+                question: "Which word describes a person who organizes and operates a business, taking on financial risks?",
+                options: ["Chef", "Entrepreneur", "Liaison", "Bureaucrat"],
+                answer: 1,
+                explanation: "An entrepreneur is someone who starts a new business venture, assuming most of the risks and enjoying most of the rewards."
+            },
+            {
+                type: "fill",
+                question: "Wearing sweatpants to a formal wedding is considered a major fashion ________.",
+                answer: "faux pas",
+                explanation: "A 'faux pas' (literally 'false step') is an embarrassing or tactless act or remark in a social situation.",
+                wordBank: ["résumé", "faux pas", "rendezvous", "boutique", "entrepreneur"]
+            },
+            {
+                type: "fill",
+                question: "We arranged a secret ________ at the café to discuss the surprise party.",
+                answer: "rendezvous",
+                explanation: "A 'rendezvous' is a meeting at an agreed time and place, often between two people.",
+                wordBank: ["résumé", "faux pas", "rendezvous", "boutique", "entrepreneur"]
+            },
+            {
+                type: "mcq",
+                question: "Which term refers to a stretch of land, especially with regard to its physical features?",
+                options: ["Route", "Boulevard", "Terrain", "Plateau"],
+                answer: 2,
+                explanation: "Terrain is a French loanword used to describe the physical features of a tract of land."
+            },
+            {
+                type: "mcq",
+                question: "Which life-saving medical discovery was made by Canadian researchers in Toronto in 1921?",
+                options: ["Penicillin", "Insulin", "The Polio Vaccine", "Aspirin"],
+                answer: 1,
+                explanation: "Insulin was discovered by Sir Frederick Banting and Charles Best at the University of Toronto, saving millions of lives of people with diabetes."
+            },
+            {
+                type: "mcq",
+                question: "Which Canadian city is known as 'Hollywood North' due to its large film and television industry?",
+                options: ["Calgary", "Halifax", "Toronto", "Ottawa"],
+                answer: 2,
+                explanation: "Toronto (along with Vancouver) is often referred to as 'Hollywood North' because a massive percentage of American movies and TV shows are filmed there."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let answered = false;
+
+        const quizContainer = document.getElementById('quizContainer');
+        const progressBar = document.getElementById('progressBar');
+        const currentQNumDisplay = document.getElementById('currentQNum');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+
+        function initQuiz() {
+            quizData.forEach((q, index) => {
+                const section = document.createElement('div');
+                section.className = `quiz-section ${index === 0 ? 'active' : ''}`;
+                section.id = `q-section-${index}`;
+
+                if (q.type === "mcq") {
+                    section.innerHTML = `
+                        <div class="question-header">
+                            <div class="question-number">${index + 1}</div>
+                            <div class="question-text">${q.question}</div>
+                        </div>
+                        <div class="options-grid">
+                            ${q.options.map((opt, i) => `
+                                <button class="option-btn" onclick="selectOption(${index}, ${i})">
+                                    <span class="option-letter">${String.fromCharCode(65 + i)}</span>
+                                    ${opt}
+                                </button>
+                            `).join('')}
+                        </div>
+                        <div class="feedback-box" id="feedback-${index}"></div>
+                        <div class="controls">
+                            <button class="btn btn-primary" id="next-btn-${index}" onclick="nextQuestion()" disabled>Next Question</button>
+                        </div>
+                    `;
+                } else if (q.type === "fill") {
+                    // Split the question at the blank
+                    const parts = q.question.split('________');
+                    
+                    section.innerHTML = `
+                        <div class="question-header">
+                            <div class="question-number">${index + 1}</div>
+                            <div class="question-text">Fill in the blank with the correct French loanword.</div>
+                        </div>
+                        
+                        <div class="fill-blank-container">
+                            <div class="sentence">
+                                ${parts[0]} <input type="text" class="blank-input" id="blank-${index}" readonly placeholder="Select a word"> ${parts[1] || ''}
+                            </div>
+                        </div>
+                        
+                        <div class="word-bank" id="bank-${index}">
+                            <div class="word-bank-title">Word Bank</div>
+                            ${q.wordBank.map(word => `
+                                <div class="word-tag" onclick="fillBlank(${index}, '${word}', this)">${word}</div>
+                            `).join('')}
+                        </div>
+                        
+                        <div class="feedback-box" id="feedback-${index}"></div>
+                        <div class="controls">
+                            <button class="btn btn-primary" id="next-btn-${index}" onclick="nextQuestion()" disabled>Next Question</button>
+                        </div>
+                    `;
+                }
+                
+                quizContainer.appendChild(section);
+            });
+            
+            updateProgress();
+        }
+
+        function selectOption(qIndex, optIndex) {
+            if (answered) return;
+            answered = true;
+
+            const section = document.getElementById(`q-section-${qIndex}`);
+            const buttons = section.querySelectorAll('.option-btn');
+            const feedback = document.getElementById(`feedback-${qIndex}`);
+            const nextBtn = document.getElementById(`next-btn-${qIndex}`);
+            const correctIndex = quizData[qIndex].answer;
+
+            buttons.forEach(btn => btn.disabled = true);
+
+            if (optIndex === correctIndex) {
+                buttons[optIndex].classList.add('correct');
+                score++;
+                scoreDisplay.textContent = score;
+                feedback.className = 'feedback-box correct';
+                feedback.innerHTML = `<strong>Correct!</strong><div class="explanation">${quizData[qIndex].explanation}</div>`;
+            } else {
+                buttons[optIndex].classList.add('incorrect');
+                buttons[correctIndex].classList.add('correct');
+                feedback.className = 'feedback-box incorrect';
+                feedback.innerHTML = `<strong>Incorrect.</strong> The correct answer was <strong>${quizData[qIndex].options[correctIndex]}</strong>.<div class="explanation">${quizData[qIndex].explanation}</div>`;
+            }
+
+            nextBtn.disabled = false;
+            
+            if (qIndex === quizData.length - 1) {
+                nextBtn.textContent = "See Results";
+            }
+        }
+
+        function fillBlank(qIndex, word, tagElement) {
+            if (answered) return;
+            
+            const input = document.getElementById(`blank-${qIndex}`);
+            const bank = document.getElementById(`bank-${qIndex}`);
+            const tags = bank.querySelectorAll('.word-tag');
+            
+            // Reset previous selection
+            tags.forEach(t => t.classList.remove('used'));
+            
+            // Set new selection
+            input.value = word;
+            tagElement.classList.add('used');
+            
+            // Auto-submit after a brief delay
+            setTimeout(() => checkFillBlank(qIndex, word), 500);
+        }
+
+        function checkFillBlank(qIndex, selectedWord) {
+            answered = true;
+            
+            const input = document.getElementById(`blank-${qIndex}`);
+            const bank = document.getElementById(`bank-${qIndex}`);
+            const tags = bank.querySelectorAll('.word-tag');
+            const feedback = document.getElementById(`feedback-${qIndex}`);
+            const nextBtn = document.getElementById(`next-btn-${qIndex}`);
+            const correctAnswer = quizData[qIndex].answer;
+
+            // Disable all tags
+            tags.forEach(t => {
+                t.style.pointerEvents = 'none';
+                if (t.textContent === correctAnswer && selectedWord !== correctAnswer) {
+                    t.style.backgroundColor = '#4CAF50';
+                    t.style.color = 'white';
+                    t.style.borderColor = '#4CAF50';
+                }
+            });
+
+            if (selectedWord === correctAnswer) {
+                input.classList.add('correct');
+                score++;
+                scoreDisplay.textContent = score;
+                feedback.className = 'feedback-box correct';
+                feedback.innerHTML = `<strong>Correct!</strong><div class="explanation">${quizData[qIndex].explanation}</div>`;
+            } else {
+                input.classList.add('incorrect');
+                feedback.className = 'feedback-box incorrect';
+                feedback.innerHTML = `<strong>Incorrect.</strong> The correct answer was <strong>${correctAnswer}</strong>.<div class="explanation">${quizData[qIndex].explanation}</div>`;
+            }
+
+            nextBtn.disabled = false;
+            
+            if (qIndex === quizData.length - 1) {
+                nextBtn.textContent = "See Results";
+            }
+        }
+
+        function nextQuestion() {
+            const currentSection = document.getElementById(`q-section-${currentQuestion}`);
+            currentSection.classList.remove('active');
+
+            currentQuestion++;
+
+            if (currentQuestion < quizData.length) {
+                const nextSection = document.getElementById(`q-section-${currentQuestion}`);
+                nextSection.classList.add('active');
+                answered = false;
+                updateProgress();
+            } else {
+                showResults();
+            }
+        }
+
+        function updateProgress() {
+            currentQNumDisplay.textContent = currentQuestion + 1;
+            const progressPercent = ((currentQuestion) / quizData.length) * 100;
+            progressBar.style.width = `${progressPercent}%`;
+        }
+
+        function showResults() {
+            document.getElementById('progressContainer').style.display = 'none';
+            document.getElementById('resultsSection').style.display = 'block';
+            document.getElementById('finalScore').textContent = score;
+
+            const title = document.getElementById('resultsTitle');
+            const message = document.getElementById('resultsMessage');
+            const icon = document.getElementById('resultsIcon');
+
+            const percentage = score / quizData.length;
+
+            if (percentage >= 0.9) {
+                title.textContent = "Outstanding!";
+                message.textContent = "You're practically an honorary Canadian! You have a deep understanding of Canadian culture and French loanwords.";
+                icon.textContent = "🏆";
+            } else if (percentage >= 0.7) {
+                title.textContent = "Great Job!";
+                message.textContent = "You have a solid grasp of Canadian facts and French vocabulary. Well done!";
+                icon.textContent = "🍁";
+            } else if (percentage >= 0.5) {
+                title.textContent = "Good Effort!";
+                message.textContent = "You know some good facts, but there's still more to learn about the Great White North.";
+                icon.textContent = "📚";
+            } else {
+                title.textContent = "Keep Learning!";
+                message.textContent = "Review the slides and try again to master your Canadian trivia and French loanwords.";
+                icon.textContent = "💪";
+            }
+        }
+
+        // Initialize quiz on load
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>
