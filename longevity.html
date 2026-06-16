@@ -245,7 +245,7 @@
             <div class="button-group">
                 <button class="btn-nav" onclick="previousQuestion()" id="prevBtn">← Previous</button>
                 <button class="btn-nav" onclick="nextQuestion()" id="nextBtn">Next →</button>
-                <button class="btn-nav" onclick="submitQuiz()" id="submitBtn" style="display:none; background:#28a745;">Submit Quiz ✓</button>
+                <button class="btn-nav" id="submitBtn" style="display:none; background:#28a745;" onclick="showResults()">Submit Quiz ✓</button>
             </div>
         </div>
 
@@ -553,26 +553,26 @@ function previousQuestion() {
 }
 
 function updateButtons() {
-    document.getElementById('prevBtn').disabled = currentQuestion === 0;
     const isLast = currentQuestion === questions.length - 1;
-    const isAnswered = answered[currentQuestion];
-    document.getElementById('nextBtn').style.display = (!isLast) ? 'inline-block' : 'none';
-    // Show Submit only on last question AND only after it has been answered
-    document.getElementById('submitBtn').style.display = (isLast && isAnswered) ? 'inline-block' : 'none';
+    document.getElementById('prevBtn').disabled = (currentQuestion === 0);
+    document.getElementById('nextBtn').style.display = isLast ? 'none' : 'inline-block';
+    document.getElementById('submitBtn').style.display = isLast ? 'inline-block' : 'none';
 }
 
 function updateProgress() {
     document.getElementById('progressFill').style.width = ((currentQuestion + 1) / questions.length * 100) + '%';
 }
 
-function submitQuiz() {
-    // If last question is a fill-in-the-blank and not yet answered, auto-check it first
-    const last = questions.length - 1;
-    if (!answered[last] && questions[last].type === 'fill') {
-        const input = document.getElementById('fillInput');
-        if (input) {
-            answers[last] = input.value.trim();
-            answered[last] = true;
+function showResults() {
+    // Collect any unanswered fill-in-the-blank before scoring
+    for (let i = 0; i < questions.length; i++) {
+        if (!answered[i]) {
+            if (questions[i].type === 'fill') {
+                answers[i] = '';
+            } else {
+                answers[i] = -1;
+            }
+            answered[i] = true;
         }
     }
     const correct = answers.reduce((n, _, i) => n + (checkAnswer(i) ? 1 : 0), 0);
@@ -592,6 +592,8 @@ function submitQuiz() {
     document.querySelector('.quiz-content').classList.remove('active');
     document.querySelector('.results-screen').classList.add('active');
 }
+
+function submitQuiz() { showResults(); }
 
 function restartQuiz() {
     currentQuestion = 0;
