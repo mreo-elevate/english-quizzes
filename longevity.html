@@ -555,8 +555,10 @@ function previousQuestion() {
 function updateButtons() {
     document.getElementById('prevBtn').disabled = currentQuestion === 0;
     const isLast = currentQuestion === questions.length - 1;
-    document.getElementById('nextBtn').style.display = isLast ? 'none' : 'inline-block';
-    document.getElementById('submitBtn').style.display = isLast ? 'inline-block' : 'none';
+    const isAnswered = answered[currentQuestion];
+    document.getElementById('nextBtn').style.display = (!isLast) ? 'inline-block' : 'none';
+    // Show Submit only on last question AND only after it has been answered
+    document.getElementById('submitBtn').style.display = (isLast && isAnswered) ? 'inline-block' : 'none';
 }
 
 function updateProgress() {
@@ -564,6 +566,15 @@ function updateProgress() {
 }
 
 function submitQuiz() {
+    // If last question is a fill-in-the-blank and not yet answered, auto-check it first
+    const last = questions.length - 1;
+    if (!answered[last] && questions[last].type === 'fill') {
+        const input = document.getElementById('fillInput');
+        if (input) {
+            answers[last] = input.value.trim();
+            answered[last] = true;
+        }
+    }
     const correct = answers.reduce((n, _, i) => n + (checkAnswer(i) ? 1 : 0), 0);
     const pct = Math.round(correct / questions.length * 100);
     const msgs = [
