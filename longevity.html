@@ -3,630 +3,592 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Longevity & Life Extension Quiz</title>
+    <title>Longevity Quiz – Future Perfect & Time Expressions</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #004499 0%, #0066CC 100%);
             min-height: 100vh;
             padding: 20px;
         }
-        
+
         .container {
             max-width: 900px;
             margin: 0 auto;
             background: white;
             border-radius: 10px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
             overflow: hidden;
         }
-        
+
         .header {
             background: linear-gradient(135deg, #0066CC 0%, #004499 100%);
             color: white;
             padding: 40px 20px;
             text-align: center;
         }
-        
-        .header h1 {
-            font-size: 36px;
-            margin-bottom: 10px;
+
+        .header h1 { font-size: 30px; margin-bottom: 8px; }
+        .header p { font-size: 16px; opacity: 0.9; }
+
+        .grammar-badge {
+            display: inline-block;
+            background: #FFD700;
+            color: #004499;
+            font-weight: bold;
+            font-size: 13px;
+            padding: 5px 16px;
+            border-radius: 20px;
+            margin-top: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-        
-        .header p {
-            font-size: 18px;
-            opacity: 0.9;
+
+        .content { padding: 40px; }
+
+        .quiz-section { display: none; }
+        .quiz-section.active { display: block; }
+
+        .start-screen { text-align: center; padding: 40px 0; }
+        .start-screen h2 { color: #0066CC; margin-bottom: 20px; font-size: 26px; }
+        .start-screen p { color: #555; margin-bottom: 12px; font-size: 15px; line-height: 1.7; }
+
+        .grammar-box {
+            background: #f0f4f8;
+            border-left: 4px solid #FFD700;
+            padding: 16px 20px;
+            margin: 20px 0;
+            text-align: left;
+            border-radius: 0 5px 5px 0;
         }
-        
-        .content {
-            padding: 40px;
+        .grammar-box h3 { color: #004499; font-size: 15px; margin-bottom: 8px; }
+        .grammar-box p { font-size: 14px; color: #444; line-height: 1.6; }
+        .grammar-box code {
+            background: #dce8f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 13px;
+            color: #004499;
         }
-        
-        .quiz-section {
-            display: none;
-        }
-        
-        .quiz-section.active {
-            display: block;
-        }
-        
-        .start-screen {
-            text-align: center;
-            padding: 40px 0;
-        }
-        
-        .start-screen h2 {
-            color: #0066CC;
-            margin-bottom: 20px;
-            font-size: 28px;
-        }
-        
-        .start-screen p {
-            color: #666;
-            margin-bottom: 15px;
-            font-size: 16px;
-            line-height: 1.6;
-        }
-        
+
         .btn {
             background: linear-gradient(135deg, #0066CC 0%, #004499 100%);
             color: white;
             border: none;
-            padding: 15px 40px;
+            padding: 14px 40px;
             font-size: 16px;
             border-radius: 5px;
             cursor: pointer;
             margin-top: 20px;
             transition: transform 0.2s, box-shadow 0.2s;
         }
-        
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 102, 204, 0.4);
-        }
-        
-        .question-container {
-            margin-bottom: 40px;
-        }
-        
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,102,204,0.4); }
+
+        .progress-bar { width: 100%; height: 8px; background: #e0e0e0; border-radius: 4px; overflow: hidden; margin-bottom: 20px; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #0066CC 0%, #FFD700 100%); transition: width 0.3s; }
+
         .question-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
             border-bottom: 2px solid #FFD700;
         }
-        
+
         .question-number {
             background: #FFD700;
-            color: #0066CC;
-            padding: 5px 15px;
+            color: #004499;
+            padding: 4px 14px;
             border-radius: 20px;
             font-weight: bold;
+            font-size: 14px;
         }
-        
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: #e0e0e0;
-            border-radius: 4px;
-            overflow: hidden;
-            margin-bottom: 20px;
+
+        .question-type-badge {
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #888;
         }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #0066CC 0%, #FFD700 100%);
-            transition: width 0.3s;
-        }
-        
+
         .question-text {
             font-size: 18px;
-            color: #333;
+            color: #222;
             margin-bottom: 20px;
             font-weight: 500;
+            line-height: 1.5;
         }
-        
-        .options {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        
+
+        .blank { display: inline-block; min-width: 140px; border-bottom: 2px solid #0066CC; color: #0066CC; font-weight: bold; }
+
+        .options { display: flex; flex-direction: column; gap: 10px; }
+
         .option {
-            padding: 15px;
+            padding: 13px 16px;
             border: 2px solid #ddd;
             border-radius: 5px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
             background: white;
+            font-size: 16px;
         }
-        
-        .option:hover {
-            border-color: #0066CC;
-            background: #f0f4f8;
-        }
-        
-        .option input[type="radio"] {
-            margin-right: 10px;
-        }
-        
-        .option.selected {
-            border-color: #0066CC;
-            background: #f0f4f8;
-        }
-        
-        .option.correct {
-            border-color: #28a745;
-            background: #d4edda;
-        }
-        
-        .option.incorrect {
-            border-color: #dc3545;
-            background: #f8d7da;
-        }
-        
-        .fill-blank {
-            padding: 10px;
+        .option:hover { border-color: #0066CC; background: #f0f4f8; }
+        .option.selected { border-color: #0066CC; background: #f0f4f8; }
+        .option.correct { border-color: #28a745; background: #d4edda; color: #155724; font-weight: bold; }
+        .option.incorrect { border-color: #dc3545; background: #f8d7da; color: #721c24; }
+
+        .fill-blank-input {
+            padding: 10px 14px;
             border: 2px solid #ddd;
             border-radius: 5px;
             font-size: 16px;
             width: 100%;
-            margin-top: 10px;
+            margin-top: 8px;
+            transition: border-color 0.2s;
         }
-        
-        .feedback {
-            margin-top: 15px;
-            padding: 15px;
-            border-radius: 5px;
-            display: none;
-        }
-        
-        .feedback.show {
-            display: block;
-        }
-        
-        .feedback.correct {
-            background: #d4edda;
-            color: #155724;
-            border-left: 4px solid #28a745;
-        }
-        
-        .feedback.incorrect {
-            background: #f8d7da;
-            color: #721c24;
-            border-left: 4px solid #dc3545;
-        }
-        
-        .button-group {
-            display: flex;
-            gap: 15px;
-            margin-top: 30px;
-            justify-content: center;
-        }
-        
-        .btn-next {
+        .fill-blank-input:focus { outline: none; border-color: #0066CC; }
+        .fill-blank-input.correct { border-color: #28a745; background: #d4edda; }
+        .fill-blank-input.incorrect { border-color: #dc3545; background: #f8d7da; }
+
+        .check-btn {
             background: #0066CC;
             color: white;
             border: none;
-            padding: 12px 30px;
+            padding: 10px 24px;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 16px;
-            transition: all 0.3s;
+            font-size: 15px;
+            margin-top: 12px;
+            transition: background 0.2s;
         }
-        
-        .btn-next:hover:not(:disabled) {
-            background: #004499;
-        }
-        
-        .btn-next:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-        
-        .results-screen {
-            text-align: center;
-            padding: 40px 0;
-        }
-        
-        .results-screen h2 {
-            color: #0066CC;
-            font-size: 32px;
-            margin-bottom: 20px;
-        }
-        
-        .score-display {
-            font-size: 48px;
-            color: #FFD700;
-            font-weight: bold;
-            margin: 30px 0;
-        }
-        
-        .results-message {
-            font-size: 20px;
-            color: #666;
-            margin-bottom: 30px;
-        }
-        
-        .results-details {
-            background: #f0f4f8;
-            padding: 20px;
+        .check-btn:hover { background: #004499; }
+
+        .feedback {
+            margin-top: 14px;
+            padding: 14px;
             border-radius: 5px;
-            margin-bottom: 30px;
-            text-align: left;
+            display: none;
+            font-size: 15px;
+            line-height: 1.5;
         }
-        
-        .results-details p {
-            margin: 10px 0;
-            font-size: 16px;
+        .feedback.show { display: block; }
+        .feedback.correct { background: #d4edda; color: #155724; border-left: 4px solid #28a745; }
+        .feedback.incorrect { background: #f8d7da; color: #721c24; border-left: 4px solid #dc3545; }
+
+        .button-group { display: flex; gap: 12px; margin-top: 28px; justify-content: center; }
+
+        .btn-nav {
+            background: #0066CC;
+            color: white;
+            border: none;
+            padding: 11px 28px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: background 0.2s;
         }
+        .btn-nav:hover:not(:disabled) { background: #004499; }
+        .btn-nav:disabled { background: #ccc; cursor: not-allowed; }
+
+        .results-screen { text-align: center; padding: 40px 0; }
+        .results-screen h2 { color: #0066CC; font-size: 30px; margin-bottom: 16px; }
+        .score-display { font-size: 52px; color: #FFD700; font-weight: bold; margin: 24px 0; text-shadow: 1px 1px 4px rgba(0,0,0,0.15); }
+        .results-message { font-size: 18px; color: #555; margin-bottom: 24px; }
+        .results-details { background: #f0f4f8; padding: 20px; border-radius: 5px; margin-bottom: 28px; text-align: left; }
+        .results-details p { margin: 8px 0; font-size: 15px; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🔬 Longevity & Life Extension Quiz 🔬</h1>
-            <p>Test your knowledge on the science, economics, and grammar of human longevity</p>
-        </div>
-        
-        <div class="content">
-            <!-- Start Screen -->
-            <div class="quiz-section active start-screen">
-                <h2>Welcome to the Longevity Quiz!</h2>
-                <p>This quiz covers:</p>
-                <p>✓ Blueprint Protocol & Nutrition<br>
-                ✓ Senolytics, NAD+, & Telomeres<br>
-                ✓ Cancer Breakthroughs (CAR-T, mRNA)<br>
-                ✓ Economic Impacts & The 2050 Vision<br>
-                ✓ Future Perfect Grammar & Time Expressions</p>
-                <p style="margin-top: 20px; font-weight: bold;">20 Questions • Multiple Choice & Fill-in-the-Blanks</p>
-                <button class="btn" onclick="startQuiz()">Start Quiz</button>
-            </div>
-            
-            <!-- Quiz Section -->
-            <div class="quiz-section quiz-content">
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressFill"></div>
-                </div>
-                
-                <div id="questionsContainer"></div>
-                
-                <div class="button-group">
-                    <button class="btn-next" onclick="previousQuestion()">← Previous</button>
-                    <button class="btn-next" onclick="nextQuestion()" id="nextBtn">Next →</button>
-                    <button class="btn-next" onclick="submitQuiz()" id="submitBtn" style="display: none;">Submit Quiz</button>
-                </div>
-            </div>
-            
-            <!-- Results Screen -->
-            <div class="quiz-section results-screen">
-                <h2>Quiz Complete! 🎉</h2>
-                <div class="score-display" id="scoreDisplay">0/20</div>
-                <div class="results-message" id="resultMessage"></div>
-                <div class="results-details">
-                    <p><strong>Your Performance:</strong></p>
-                    <p>Correct Answers: <span id="correctCount">0</span>/20</p>
-                    <p>Accuracy: <span id="accuracy">0</span>%</p>
-                    <p>Time Spent: <span id="timeSpent">0</span> minutes</p>
-                </div>
-                <button class="btn" onclick="restartQuiz()">Retake Quiz</button>
-            </div>
-        </div>
+<div class="container">
+    <div class="header">
+        <h1>🔬 The Future of Human Longevity</h1>
+        <p>Grammar Quiz — Future Perfect & Time Expressions</p>
+        <div class="grammar-badge">Future Perfect · Will Have + Past Participle · Time Expressions</div>
     </div>
-    
-    <script>
-        const questions = [
-            {
-                type: "multiple-choice",
-                question: "What is the common, informal term used by scientists to describe senescent cells that refuse to die?",
-                options: ["Dead cells", "Zombie cells", "Mutant cells", "Ghost cells"],
-                correct: 1,
-                explanation: "Senescent cells are often called 'zombie cells' because they're no longer dividing but refuse to die, accumulating damage over time."
-            },
-            {
-                type: "multiple-choice",
-                question: "Which critical coenzyme, essential for cellular energy, typically declines by 50% by age 50?",
-                options: ["ATP", "NAD+", "NADH", "Coenzyme Q10"],
-                correct: 1,
-                explanation: "NAD+ (Nicotinamide Adenine Dinucleotide) is crucial for cellular energy production and declines significantly with age."
-            },
-            {
-                type: "multiple-choice",
-                question: "What is the primary goal of Bryan Johnson's Blueprint protocol?",
-                options: ["Gaining muscle mass", "Reversing biological age", "Losing weight", "Increasing lifespan only"],
-                correct: 1,
-                explanation: "Blueprint aims to reverse biological age through targeted interventions in diet, exercise, sleep, and supplementation."
-            },
-            {
-                type: "multiple-choice",
-                question: "What specific structures do telomeres protect at the ends of our chromosomes?",
-                options: ["Mitochondria", "Genetic information", "Cell membranes", "Ribosomes"],
-                correct: 1,
-                explanation: "Telomeres are protective caps at chromosome ends that prevent genetic information loss during cell division."
-            },
-            {
-                type: "fill-blank",
-                question: "By the year 2050, scientists _____ (discover) a cure for most forms of cancer.",
-                blank: "will have discovered",
-                explanation: "This uses Future Perfect tense to describe an action that will be completed by a specific future time."
-            },
-            {
-                type: "multiple-choice",
-                question: "In CAR-T Cell Therapy, what specific type of immune cell is extracted and genetically engineered?",
-                options: ["B cells", "T cells", "Neutrophils", "Macrophages"],
-                correct: 1,
-                explanation: "CAR-T therapy engineers T cells to recognize and attack cancer cells more effectively."
-            },
-            {
-                type: "fill-blank",
-                question: "Within the next decade, the first person to live to 150 _____ (be) born.",
-                blank: "will have been",
-                explanation: "This uses Future Perfect Passive Voice to describe a future event that will have occurred by a specific time."
-            },
-            {
-                type: "multiple-choice",
-                question: "What does Alzheimer's research heavily focus on clearing?",
-                options: ["Hemoglobin", "Amyloid-beta", "Keratin", "Collagen"],
-                correct: 1,
-                explanation: "Amyloid-beta is a toxic protein that accumulates in Alzheimer's disease and is a major research target."
-            },
-            {
-                type: "multiple-choice",
-                question: "What is a major economic challenge of extreme longevity?",
-                options: ["Too many jobs", "Pension sustainability", "Decreased healthcare costs", "Labor shortage"],
-                correct: 1,
-                explanation: "Pension systems face sustainability challenges when people live 30+ years longer than expected."
-            },
-            {
-                type: "fill-blank",
-                question: "_____ the time we retire, the global healthcare system will have completely transformed.",
-                blank: "By",
-                explanation: "'By' is the correct time expression used with Future Perfect to indicate completion before a specific point."
-            },
-            {
-                type: "multiple-choice",
-                question: "The 2050 vision includes workplaces with how many generations working together?",
-                options: ["Two", "Three", "Five", "Seven"],
-                correct: 2,
-                explanation: "The harmonious 2050 vision features five active generations (from Gen Z to centenarians) working together."
-            },
-            {
-                type: "multiple-choice",
-                question: "Which policy change is necessary to support extreme longevity?",
-                options: ["Reducing research funding", "Shifting to preventive medicine", "Eliminating pensions", "Banning senolytics"],
-                correct: 1,
-                explanation: "Healthcare systems must shift from reactive treatment to proactive, preventive medicine."
-            },
-            {
-                type: "fill-blank",
-                question: "By the time I am 80, I _____ (have) three different careers.",
-                blank: "will have had",
-                explanation: "Future Perfect tense describes multiple careers completed by age 80 in the longevity scenario."
-            },
-            {
-                type: "multiple-choice",
-                question: "What term describes the tension between longer lives and economic strain?",
-                options: ["The Longevity Paradox", "The Blueprint Protocol", "The Hayflick Limit", "The Senolytic Effect"],
-                correct: 0,
-                explanation: "The Longevity Paradox describes the challenge: living longer is desirable but creates economic and social strain."
-            },
-            {
-                type: "fill-blank",
-                question: "Within the next decade, scientists _____ (discover) new treatments for Alzheimer's disease.",
-                blank: "will have discovered",
-                explanation: "Future Perfect describes discoveries expected to be completed within a specific timeframe."
-            },
-            {
-                type: "multiple-choice",
-                question: "Which coenzyme is often boosted in longevity protocols to restore cellular energy?",
-                options: ["ATP", "NAD+", "NADPH", "Acetyl-CoA"],
-                correct: 1,
-                explanation: "NAD+ boosters are central to many longevity protocols, including Blueprint."
-            },
-            {
-                type: "fill-blank",
-                question: "By 2050, society _____ (redefine) the concept of retirement completely.",
-                blank: "will have redefined",
-                explanation: "Future Perfect describes the complete transformation of retirement concepts by 2050."
-            },
-            {
-                type: "multiple-choice",
-                question: "What is a key feature of the 2050 vision for the workforce?",
-                options: ["Mandatory retirement at 60", "Intergenerational teams", "Complete automation", "Shorter lifespans"],
-                correct: 1,
-                explanation: "The 2050 vision emphasizes intergenerational teams combining youth innovation with elder wisdom."
-            },
-            {
-                type: "fill-blank",
-                question: "Before the end of the century, we _____ (transform) how we approach aging entirely.",
-                blank: "will have transformed",
-                explanation: "Future Perfect with 'before' describes transformation expected before a future deadline."
-            },
-            {
-                type: "multiple-choice",
-                question: "Which time expression is most commonly used with the Future Perfect tense?",
-                options: ["Yesterday", "Right now", "By 2050", "Last year"],
-                correct: 2,
-                explanation: "'By 2050' is a perfect example of a time expression used with Future Perfect to indicate completion before a specific future time."
-            }
-        ];
-        
-        let currentQuestion = 0;
-        let answers = new Array(questions.length).fill(null);
-        let answered = new Array(questions.length).fill(false);
-        let startTime = null;
-        
-        function startQuiz() {
-            startTime = Date.now();
-            document.querySelector('.start-screen').classList.remove('active');
-            document.querySelector('.quiz-content').classList.add('active');
-            renderQuestion();
-        }
-        
-        function renderQuestion() {
-            const question = questions[currentQuestion];
-            const container = document.getElementById('questionsContainer');
-            
-            let html = `
-                <div class="question-container">
-                    <div class="question-header">
-                        <div class="question-number">Question ${currentQuestion + 1} of ${questions.length}</div>
-                    </div>
-                    <div class="question-text">${question.question}</div>
-            `;
-            
-            if (question.type === "multiple-choice") {
-                html += '<div class="options">';
-                question.options.forEach((option, index) => {
-                    const isSelected = answers[currentQuestion] === index;
-                    const isAnswered = answered[currentQuestion];
-                    const isCorrect = index === question.correct;
-                    
-                    let className = 'option';
-                    if (isAnswered) {
-                        if (isCorrect) className += ' correct';
-                        else if (isSelected) className += ' incorrect';
-                    } else if (isSelected) {
-                        className += ' selected';
-                    }
-                    
-                    html += `
-                        <label class="${className}">
-                            <input type="radio" name="answer" value="${index}" 
-                                ${isSelected ? 'checked' : ''} 
-                                ${isAnswered ? 'disabled' : ''}
-                                onchange="selectAnswer(${index})">
-                            ${option}
-                        </label>
-                    `;
-                });
-                html += '</div>';
-            } else if (question.type === "fill-blank") {
-                const userAnswer = answers[currentQuestion] || '';
-                html += `
-                    <input type="text" class="fill-blank" id="blankInput" 
-                        value="${userAnswer}" 
-                        ${answered[currentQuestion] ? 'disabled' : ''}
-                        onchange="selectAnswer(document.getElementById('blankInput').value)">
-                `;
-            }
-            
+
+    <div class="content">
+
+        <!-- START SCREEN -->
+        <div class="quiz-section active start-screen">
+            <h2>Grammar Focus: Future Perfect</h2>
+
+            <div class="grammar-box">
+                <h3>Structure</h3>
+                <p><code>Subject + will have + past participle</code><br>
+                e.g. "By 2050, scientists <strong>will have discovered</strong> a cure for cancer."</p>
+            </div>
+
+            <div class="grammar-box">
+                <h3>Common Time Expressions</h3>
+                <p>
+                    <code>by + time</code> &nbsp;·&nbsp; <code>by the time + clause</code> &nbsp;·&nbsp;
+                    <code>within + period</code> &nbsp;·&nbsp; <code>before + time/clause</code> &nbsp;·&nbsp;
+                    <code>in + period</code>
+                </p>
+            </div>
+
+            <p style="margin-top:16px; font-weight:bold; color:#004499;">20 Questions · Multiple Choice & Fill-in-the-Blank</p>
+            <button class="btn" onclick="startQuiz()">Start Quiz →</button>
+        </div>
+
+        <!-- QUIZ CONTENT -->
+        <div class="quiz-section quiz-content">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div id="questionsContainer"></div>
+            <div class="button-group">
+                <button class="btn-nav" onclick="previousQuestion()" id="prevBtn">← Previous</button>
+                <button class="btn-nav" onclick="nextQuestion()" id="nextBtn">Next →</button>
+                <button class="btn-nav" onclick="submitQuiz()" id="submitBtn" style="display:none; background:#28a745;">Submit Quiz ✓</button>
+            </div>
+        </div>
+
+        <!-- RESULTS -->
+        <div class="quiz-section results-screen">
+            <h2>Quiz Complete! 🎉</h2>
+            <div class="score-display" id="scoreDisplay">0/20</div>
+            <div class="results-message" id="resultMessage"></div>
+            <div class="results-details">
+                <p><strong>Your Performance:</strong></p>
+                <p>Correct Answers: <span id="correctCount">0</span> / 20</p>
+                <p>Accuracy: <span id="accuracy">0</span>%</p>
+            </div>
+            <button class="btn" onclick="restartQuiz()">Try Again</button>
+        </div>
+
+    </div>
+</div>
+
+<script>
+const questions = [
+    // ── MULTIPLE CHOICE ──────────────────────────────────────────────────────
+    {
+        type: "mc",
+        tag: "Multiple Choice",
+        question: "Choose the correct sentence in the Future Perfect:",
+        options: [
+            "By 2050, scientists will discover a cure for cancer.",
+            "By 2050, scientists will have discovered a cure for cancer.",
+            "By 2050, scientists have discovered a cure for cancer.",
+            "By 2050, scientists had discovered a cure for cancer."
+        ],
+        correct: 1,
+        explanation: "Future Perfect = <strong>will have + past participle</strong>. We use it with <em>by + future time</em> to say an action will be completed before that point."
+    },
+    {
+        type: "mc",
+        tag: "Multiple Choice",
+        question: "Which time expression is most naturally used with the Future Perfect?",
+        options: ["Yesterday", "Right now", "By the time I turn 80", "Last year"],
+        correct: 2,
+        explanation: "<strong>By the time + clause</strong> is a classic Future Perfect trigger. It indicates that one action will be completed before another future event."
+    },
+    {
+        type: "mc",
+        tag: "Multiple Choice",
+        question: "Select the correct Future Perfect sentence:",
+        options: [
+            "Within the next decade, medicine will transform completely.",
+            "Within the next decade, medicine will have transformed completely.",
+            "Within the next decade, medicine transforms completely.",
+            "Within the next decade, medicine has transformed completely."
+        ],
+        correct: 1,
+        explanation: "<strong>Within the next decade</strong> signals a period that ends in the future — perfect for Future Perfect to show completion before that deadline."
+    },
+    {
+        type: "mc",
+        tag: "Multiple Choice",
+        question: "Which sentence uses Future Perfect INCORRECTLY?",
+        options: [
+            "By 2060, humans will have colonised Mars.",
+            "Before I retire, I will have worked in three different fields.",
+            "By the time she is 100, she will have seen many technological revolutions.",
+            "In 2030, scientists will have been discovering the cure."
+        ],
+        correct: 3,
+        explanation: "Option D mixes Future Perfect with a continuous form incorrectly. The correct form is simply <strong>will have discovered</strong>. Future Perfect Continuous would be <em>will have been discovering</em> only when emphasising duration, not completion."
+    },
+    {
+        type: "mc",
+        tag: "Multiple Choice",
+        question: "\"_____ the time we retire, the concept of ageing will have changed forever.\" Choose the correct word:",
+        options: ["In", "On", "By", "At"],
+        correct: 2,
+        explanation: "<strong>By the time</strong> is the fixed expression used to introduce the reference point in Future Perfect sentences."
+    },
+    {
+        type: "mc",
+        tag: "Multiple Choice",
+        question: "Which sentence is in the Future Perfect PASSIVE voice?",
+        options: [
+            "Scientists will have developed a longevity pill.",
+            "A longevity pill will have been developed by scientists.",
+            "Scientists have developed a longevity pill.",
+            "A longevity pill will be developed by scientists."
+        ],
+        correct: 1,
+        explanation: "Future Perfect Passive = <strong>will have been + past participle</strong>. The subject receives the action instead of performing it."
+    },
+    {
+        type: "mc",
+        tag: "Multiple Choice",
+        question: "\"Before the end of the century, the first person to live to 200 _____ born.\" Complete with Future Perfect Passive:",
+        options: ["will be", "will have been", "has been", "would have been"],
+        correct: 1,
+        explanation: "<strong>Will have been born</strong> = Future Perfect Passive. <em>Before + future time</em> triggers Future Perfect to show the event will be completed before that deadline."
+    },
+    {
+        type: "mc",
+        tag: "Multiple Choice",
+        question: "Choose the sentence that correctly uses 'in' as a time expression with Future Perfect:",
+        options: [
+            "In 2050, we will cure all diseases.",
+            "In the next 30 years, researchers will have mapped the entire human genome.",
+            "In yesterday, they discovered a new treatment.",
+            "In now, the drug will have been approved."
+        ],
+        correct: 1,
+        explanation: "<strong>In + period</strong> (e.g. <em>in the next 30 years</em>) works with Future Perfect to indicate completion within a future timeframe."
+    },
+    {
+        type: "mc",
+        tag: "Multiple Choice",
+        question: "Which pair of sentences is grammatically PARALLEL in Future Perfect?",
+        options: [
+            "By 2040, she will have retired. / By 2040, he retires.",
+            "By 2040, she will have retired. / By 2040, he will have started a new career.",
+            "By 2040, she retired. / By 2040, he will have started a new career.",
+            "By 2040, she has retired. / By 2040, he will have started a new career."
+        ],
+        correct: 1,
+        explanation: "Both sentences must use <strong>will have + past participle</strong> to be parallel in Future Perfect tense."
+    },
+    {
+        type: "mc",
+        tag: "Multiple Choice",
+        question: "\"By the time this generation grows old, AI _____ (revolutionise) healthcare.\" What is the correct form?",
+        options: ["will revolutionise", "will have revolutionised", "revolutionised", "has revolutionised"],
+        correct: 1,
+        explanation: "<strong>By the time + present simple clause</strong> triggers Future Perfect in the main clause: <em>will have revolutionised</em>."
+    },
+
+    // ── FILL IN THE BLANK ─────────────────────────────────────────────────────
+    {
+        type: "fill",
+        tag: "Fill in the Blank",
+        question: "Complete with the correct Future Perfect form of the verb in brackets:\n\n\"By 2050, Bryan Johnson _____ (spend) over $50 million on his longevity research.\"",
+        blank: "will have spent",
+        explanation: "Future Perfect: <strong>will have spent</strong>. The irregular past participle of <em>spend</em> is <em>spent</em>."
+    },
+    {
+        type: "fill",
+        tag: "Fill in the Blank",
+        question: "Complete with the correct Future Perfect form:\n\n\"Within the next decade, doctors _____ (develop) personalised cancer vaccines for millions of patients.\"",
+        blank: "will have developed",
+        explanation: "Future Perfect: <strong>will have developed</strong>. <em>Within the next decade</em> signals completion before a future deadline."
+    },
+    {
+        type: "fill",
+        tag: "Fill in the Blank",
+        question: "Complete with the correct Future Perfect form:\n\n\"Before she turns 90, she _____ (live) through three major medical revolutions.\"",
+        blank: "will have lived",
+        explanation: "Future Perfect: <strong>will have lived</strong>. <em>Before + future clause</em> is a classic Future Perfect trigger."
+    },
+    {
+        type: "fill",
+        tag: "Fill in the Blank",
+        question: "Complete with the correct time expression:\n\n\"_____ the time I finish medical school, gene therapy will have become a standard treatment.\"",
+        blank: "By",
+        explanation: "<strong>By the time</strong> is the fixed expression used to introduce the reference point before which the Future Perfect action is completed."
+    },
+    {
+        type: "fill",
+        tag: "Fill in the Blank",
+        question: "Complete with the correct Future Perfect form:\n\n\"By the end of this century, scientists _____ (cure) most forms of Alzheimer's disease.\"",
+        blank: "will have cured",
+        explanation: "Future Perfect: <strong>will have cured</strong>. <em>By the end of this century</em> is the future deadline."
+    },
+    {
+        type: "fill",
+        tag: "Fill in the Blank",
+        question: "Complete with the correct Future Perfect PASSIVE form:\n\n\"By 2040, an effective anti-ageing drug _____ (approve) by health authorities worldwide.\"",
+        blank: "will have been approved",
+        explanation: "Future Perfect Passive: <strong>will have been approved</strong>. The drug receives the action, so we use passive voice."
+    },
+    {
+        type: "fill",
+        tag: "Fill in the Blank",
+        question: "Complete with the correct Future Perfect form:\n\n\"In the next 20 years, researchers _____ (sequence) the genomes of over a billion people.\"",
+        blank: "will have sequenced",
+        explanation: "Future Perfect: <strong>will have sequenced</strong>. <em>In the next 20 years</em> marks the period within which the action will be completed."
+    },
+    {
+        type: "fill",
+        tag: "Fill in the Blank",
+        question: "Complete with the correct time expression:\n\n\"_____ 2060, five generations will be working side by side in the same company.\"",
+        blank: "By",
+        explanation: "<strong>By + year</strong> is the most common time expression with Future Perfect, indicating completion before or at that point in time."
+    },
+    {
+        type: "fill",
+        tag: "Fill in the Blank",
+        question: "Complete with the correct Future Perfect form:\n\n\"Before I retire, I _____ (have) at least three different careers thanks to longer lifespans.\"",
+        blank: "will have had",
+        explanation: "Future Perfect: <strong>will have had</strong>. The irregular past participle of <em>have</em> is <em>had</em>."
+    },
+    {
+        type: "fill",
+        tag: "Fill in the Blank",
+        question: "Complete with the correct Future Perfect form:\n\n\"By the time longevity treatments become affordable, society _____ (redefine) the meaning of old age completely.\"",
+        blank: "will have redefined",
+        explanation: "Future Perfect: <strong>will have redefined</strong>. The irregular past participle of <em>redefine</em> is <em>redefined</em>. <em>By the time + present simple</em> triggers Future Perfect in the main clause."
+    }
+];
+
+let currentQuestion = 0;
+let answers = new Array(questions.length).fill(null);
+let answered = new Array(questions.length).fill(false);
+
+function startQuiz() {
+    document.querySelector('.start-screen').classList.remove('active');
+    document.querySelector('.quiz-content').classList.add('active');
+    renderQuestion();
+}
+
+function renderQuestion() {
+    const q = questions[currentQuestion];
+    const container = document.getElementById('questionsContainer');
+    let html = `
+        <div class="question-container">
+            <div class="question-header">
+                <div class="question-number">Question ${currentQuestion + 1} of ${questions.length}</div>
+                <div class="question-type-badge">${q.tag}</div>
+            </div>
+            <div class="question-text">${q.question.replace(/\n/g, '<br>')}</div>
+    `;
+
+    if (q.type === "mc") {
+        html += '<div class="options">';
+        q.options.forEach((opt, i) => {
+            let cls = 'option';
             if (answered[currentQuestion]) {
-                const isCorrect = checkAnswer(currentQuestion);
-                html += `
-                    <div class="feedback show ${isCorrect ? 'correct' : 'incorrect'}">
-                        <strong>${isCorrect ? '✓ Correct!' : '✗ Incorrect'}</strong><br>
-                        ${question.explanation}
-                    </div>
-                `;
+                if (i === q.correct) cls += ' correct';
+                else if (answers[currentQuestion] === i) cls += ' incorrect';
+            } else if (answers[currentQuestion] === i) {
+                cls += ' selected';
             }
-            
-            html += '</div>';
-            container.innerHTML = html;
-            
-            updateProgress();
-            updateButtons();
+            html += `<label class="${cls}">
+                <input type="radio" name="ans" value="${i}"
+                    ${answers[currentQuestion] === i ? 'checked' : ''}
+                    ${answered[currentQuestion] ? 'disabled' : ''}
+                    onchange="selectMC(${i})">
+                ${opt}
+            </label>`;
+        });
+        html += '</div>';
+    } else {
+        const val = answers[currentQuestion] || '';
+        let inputCls = 'fill-blank-input';
+        if (answered[currentQuestion]) {
+            inputCls += checkAnswer(currentQuestion) ? ' correct' : ' incorrect';
         }
-        
-        function selectAnswer(value) {
-            if (!answered[currentQuestion]) {
-                answers[currentQuestion] = value;
-                answered[currentQuestion] = true;
-                renderQuestion();
-            }
+        html += `<input type="text" id="fillInput" class="${inputCls}"
+            placeholder="Type your answer here..."
+            value="${val}"
+            ${answered[currentQuestion] ? 'disabled' : ''}
+            onkeydown="if(event.key==='Enter') checkFill()">`;
+        if (!answered[currentQuestion]) {
+            html += `<button class="check-btn" onclick="checkFill()">Check Answer</button>`;
         }
-        
-        function checkAnswer(index) {
-            const question = questions[index];
-            if (question.type === "multiple-choice") {
-                return answers[index] === question.correct;
-            } else if (question.type === "fill-blank") {
-                return answers[index].toLowerCase().trim() === question.blank.toLowerCase().trim();
-            }
-            return false;
-        }
-        
-        function nextQuestion() {
-            if (currentQuestion < questions.length - 1) {
-                currentQuestion++;
-                renderQuestion();
-            }
-        }
-        
-        function previousQuestion() {
-            if (currentQuestion > 0) {
-                currentQuestion--;
-                renderQuestion();
-            }
-        }
-        
-        function updateButtons() {
-            const nextBtn = document.getElementById('nextBtn');
-            const submitBtn = document.getElementById('submitBtn');
-            
-            if (currentQuestion === questions.length - 1) {
-                nextBtn.style.display = 'none';
-                submitBtn.style.display = 'inline-block';
-            } else {
-                nextBtn.style.display = 'inline-block';
-                submitBtn.style.display = 'none';
-            }
-        }
-        
-        function updateProgress() {
-            const progress = ((currentQuestion + 1) / questions.length) * 100;
-            document.getElementById('progressFill').style.width = progress + '%';
-        }
-        
-        function submitQuiz() {
-            const correctCount = answers.reduce((count, _, index) => {
-                return count + (checkAnswer(index) ? 1 : 0);
-            }, 0);
-            
-            const accuracy = Math.round((correctCount / questions.length) * 100);
-            const endTime = Date.now();
-            const timeSpent = Math.round((endTime - startTime) / 60000);
-            
-            let message = '';
-            if (accuracy >= 90) {
-                message = "Outstanding! You have mastered the science and grammar of longevity! 🌟";
-            } else if (accuracy >= 80) {
-                message = "Excellent work! You have a strong understanding of longevity concepts! 👏";
-            } else if (accuracy >= 70) {
-                message = "Good job! You understand the key concepts of longevity and Future Perfect grammar. 📚";
-            } else if (accuracy >= 60) {
-                message = "Not bad! Review the concepts and try again to improve your score. 💪";
-            } else {
-                message = "Keep learning! Revisit the lesson and try the quiz again. You've got this! 🚀";
-            }
-            
-            document.getElementById('scoreDisplay').textContent = `${correctCount}/20`;
-            document.getElementById('resultMessage').textContent = message;
-            document.getElementById('correctCount').textContent = correctCount;
-            document.getElementById('accuracy').textContent = accuracy;
-            document.getElementById('timeSpent').textContent = timeSpent;
-            
-            document.querySelector('.quiz-content').classList.remove('active');
-            document.querySelector('.results-screen').classList.add('active');
-        }
-        
-        function restartQuiz() {
-            currentQuestion = 0;
-            answers = new Array(questions.length).fill(null);
-            answered = new Array(questions.length).fill(false);
-            startTime = null;
-            
-            document.querySelector('.results-screen').classList.remove('active');
-            document.querySelector('.start-screen').classList.add('active');
-        }
-    </script>
+    }
+
+    if (answered[currentQuestion]) {
+        const ok = checkAnswer(currentQuestion);
+        html += `<div class="feedback show ${ok ? 'correct' : 'incorrect'}">
+            <strong>${ok ? '✓ Correct!' : '✗ Incorrect'}</strong>
+            ${!ok && q.type === 'fill' ? `<br>Correct answer: <strong>${q.blank}</strong>` : ''}
+            <br>${q.explanation}
+        </div>`;
+    }
+
+    html += '</div>';
+    container.innerHTML = html;
+    updateProgress();
+    updateButtons();
+}
+
+function selectMC(i) {
+    if (answered[currentQuestion]) return;
+    answers[currentQuestion] = i;
+    answered[currentQuestion] = true;
+    renderQuestion();
+}
+
+function checkFill() {
+    if (answered[currentQuestion]) return;
+    const input = document.getElementById('fillInput');
+    answers[currentQuestion] = input.value.trim();
+    answered[currentQuestion] = true;
+    renderQuestion();
+}
+
+function checkAnswer(idx) {
+    const q = questions[idx];
+    if (q.type === 'mc') return answers[idx] === q.correct;
+    return answers[idx].toLowerCase() === q.blank.toLowerCase();
+}
+
+function nextQuestion() {
+    if (currentQuestion < questions.length - 1) { currentQuestion++; renderQuestion(); }
+}
+function previousQuestion() {
+    if (currentQuestion > 0) { currentQuestion--; renderQuestion(); }
+}
+
+function updateButtons() {
+    document.getElementById('prevBtn').disabled = currentQuestion === 0;
+    const isLast = currentQuestion === questions.length - 1;
+    document.getElementById('nextBtn').style.display = isLast ? 'none' : 'inline-block';
+    document.getElementById('submitBtn').style.display = isLast ? 'inline-block' : 'none';
+}
+
+function updateProgress() {
+    document.getElementById('progressFill').style.width = ((currentQuestion + 1) / questions.length * 100) + '%';
+}
+
+function submitQuiz() {
+    const correct = answers.reduce((n, _, i) => n + (checkAnswer(i) ? 1 : 0), 0);
+    const pct = Math.round(correct / questions.length * 100);
+    const msgs = [
+        [90, "Outstanding! You have mastered the Future Perfect! 🌟"],
+        [80, "Excellent! You have a strong command of Future Perfect grammar! 👏"],
+        [70, "Good job! Keep practising the time expressions. 📚"],
+        [60, "Not bad! Review the structure and try again. 💪"],
+        [0,  "Keep going! Re-read the grammar notes and try again. 🚀"]
+    ];
+    const msg = msgs.find(([min]) => pct >= min)[1];
+    document.getElementById('scoreDisplay').textContent = `${correct}/20`;
+    document.getElementById('resultMessage').textContent = msg;
+    document.getElementById('correctCount').textContent = correct;
+    document.getElementById('accuracy').textContent = pct;
+    document.querySelector('.quiz-content').classList.remove('active');
+    document.querySelector('.results-screen').classList.add('active');
+}
+
+function restartQuiz() {
+    currentQuestion = 0;
+    answers = new Array(questions.length).fill(null);
+    answered = new Array(questions.length).fill(false);
+    document.querySelector('.results-screen').classList.remove('active');
+    document.querySelector('.start-screen').classList.add('active');
+}
+</script>
 </body>
 </html>
