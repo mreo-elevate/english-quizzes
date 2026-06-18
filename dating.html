@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dating Quiz: Vocabulary & Grammar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1F4E78; /* Navy Blue */
+            --secondary: #E74C3C; /* Red */
+            --accent: #F39C12; /* Orange */
+            --bg-color: #F8F9FA;
+            --text-color: #333333;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .header {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 8px solid var(--secondary);
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            font-weight: 700;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px 60px;
+        }
+
+        .progress-container {
+            background-color: var(--white);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+        }
+
+        .progress-text {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .progress-bar-bg {
+            flex-grow: 1;
+            height: 12px;
+            background-color: #E0E0E0;
+            border-radius: 6px;
+            margin: 0 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background-color: var(--secondary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .score-display {
+            font-weight: 900;
+            color: var(--secondary);
+            font-size: 1.2rem;
+        }
+
+        .question-container {
+            background-color: var(--white);
+            border-radius: 10px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: none;
+        }
+
+        .question-container.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .question-number {
+            font-size: 0.9rem;
+            color: var(--primary);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 30px;
+            line-height: 1.4;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .option {
+            background-color: #F5F5F5;
+            border: 2px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .option:hover {
+            border-color: var(--secondary);
+            background-color: #FFF5F5;
+        }
+
+        .option.selected {
+            background-color: var(--secondary);
+            color: var(--white);
+            border-color: var(--secondary);
+        }
+
+        .option.correct {
+            background-color: #27AE60;
+            color: var(--white);
+            border-color: #27AE60;
+        }
+
+        .option.incorrect {
+            background-color: #E74C3C;
+            color: var(--white);
+            border-color: #E74C3C;
+        }
+
+        .fill-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            border: 2px solid #E0E0E0;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-family: 'Montserrat', sans-serif;
+            transition: border-color 0.3s ease;
+        }
+
+        .fill-input:focus {
+            outline: none;
+            border-color: var(--secondary);
+        }
+
+        .word-bank {
+            background-color: #F5F5F5;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            color: #666;
+        }
+
+        .word-bank-label {
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .word-bank-words {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .word-bank-word {
+            background-color: var(--white);
+            border: 1px solid #DDD;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .button-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background-color: var(--secondary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: #C0392B;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(231, 76, 60, 0.3);
+        }
+
+        .btn-primary:disabled {
+            background-color: #BDC3C7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-secondary:hover {
+            background-color: #163A52;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(31, 78, 120, 0.3);
+        }
+
+        .explanation {
+            background-color: #E8F8F5;
+            border-left: 4px solid #27AE60;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 6px;
+            display: none;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .explanation.show {
+            display: block;
+        }
+
+        .explanation-title {
+            font-weight: 700;
+            color: #27AE60;
+            margin-bottom: 10px;
+        }
+
+        .results-screen {
+            background-color: var(--white);
+            border-radius: 10px;
+            padding: 60px 40px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: none;
+        }
+
+        .results-screen.show {
+            display: block;
+        }
+
+        .results-score {
+            font-size: 4rem;
+            font-weight: 900;
+            color: var(--secondary);
+            margin-bottom: 20px;
+        }
+
+        .results-percentage {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 30px;
+        }
+
+        .results-message {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .results-details {
+            background-color: #F5F5F5;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 40px;
+            text-align: left;
+        }
+
+        .results-detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #E0E0E0;
+            font-size: 1.1rem;
+        }
+
+        .results-detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .results-detail-label {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .results-detail-value {
+            font-weight: 700;
+            color: var(--secondary);
+        }
+
+        .intro-screen {
+            background-color: var(--white);
+            border-radius: 10px;
+            padding: 60px 40px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: block;
+        }
+
+        .intro-screen.hidden {
+            display: none;
+        }
+
+        .intro-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .intro-description {
+            font-size: 1.2rem;
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 40px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .intro-info {
+            background-color: #F5F5F5;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 40px;
+            text-align: left;
+        }
+
+        .intro-info-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .intro-info-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .intro-info-icon {
+            background-color: var(--secondary);
+            color: var(--white);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .intro-info-text {
+            flex-grow: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Dating Quiz</h1>
+        <p>Vocabulary & Grammar Challenge</p>
+    </div>
+
+    <div class="container">
+        <div class="intro-screen" id="introScreen">
+            <h2 class="intro-title">Welcome to the Dating Quiz!</h2>
+            <p class="intro-description">
+                Test your knowledge of modern dating vocabulary and tricky grammar distinctions. This quiz covers key terms from the lesson and common word pairs that confuse English learners.
+            </p>
+            <div class="intro-info">
+                <div class="intro-info-item">
+                    <div class="intro-info-icon">📚</div>
+                    <div class="intro-info-text"><strong>20 Questions</strong> covering vocabulary and grammar</div>
+                </div>
+                <div class="intro-info-item">
+                    <div class="intro-info-icon">⏱️</div>
+                    <div class="intro-info-text"><strong>Multiple Choice & Fill-in-the-Blank</strong> formats</div>
+                </div>
+                <div class="intro-info-item">
+                    <div class="intro-info-icon">✅</div>
+                    <div class="intro-info-text"><strong>Instant Feedback</strong> with explanations for each answer</div>
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="startQuiz()" style="font-size: 1.2rem; padding: 18px 50px;">Start Quiz</button>
+        </div>
+
+        <div class="progress-container" id="progressContainer" style="display: none;">
+            <span class="progress-text">Question <span id="currentQuestion">1</span> of 20</span>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progressBar"></div>
+            </div>
+            <span class="score-display"><span id="correctCount">0</span>/20</span>
+        </div>
+
+        <div id="questionsContainer"></div>
+
+        <div class="results-screen" id="resultsScreen">
+            <div class="results-score" id="finalScore">0/20</div>
+            <div class="results-percentage" id="finalPercentage">0%</div>
+            <div class="results-message" id="resultMessage"></div>
+            <div class="results-details">
+                <div class="results-detail-item">
+                    <span class="results-detail-label">Total Questions:</span>
+                    <span class="results-detail-value">20</span>
+                </div>
+                <div class="results-detail-item">
+                    <span class="results-detail-label">Correct Answers:</span>
+                    <span class="results-detail-value" id="detailCorrect">0</span>
+                </div>
+                <div class="results-detail-item">
+                    <span class="results-detail-label">Incorrect Answers:</span>
+                    <span class="results-detail-value" id="detailIncorrect">0</span>
+                </div>
+                <div class="results-detail-item">
+                    <span class="results-detail-label">Accuracy:</span>
+                    <span class="results-detail-value" id="detailAccuracy">0%</span>
+                </div>
+            </div>
+            <button class="btn btn-secondary" onclick="location.reload()">Retake Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                type: 'multiple',
+                question: 'What does "SWIPE" mean in the context of dating apps?',
+                options: [
+                    'To browse profiles by swiping right (interested) or left (not interested)',
+                    'To steal someone\'s profile information',
+                    'To delete your account',
+                    'To block another user'
+                ],
+                correct: 0,
+                explanation: 'Swiping is the primary action on dating apps like Tinder. Right swipe = interested, left swipe = not interested.'
+            },
+            {
+                type: 'multiple',
+                question: 'What is a "MATCH" in dating app terminology?',
+                options: [
+                    'A person who looks exactly like you',
+                    'When two users mutually like each other, enabling direct messaging',
+                    'A scheduled date',
+                    'A person you\'ve been talking to for a month'
+                ],
+                correct: 1,
+                explanation: 'A match occurs when both users swipe right on each other, creating a mutual connection and allowing them to message.'
+            },
+            {
+                type: 'multiple',
+                question: 'What does "GHOSTING" mean?',
+                options: [
+                    'Going on a date to a haunted house',
+                    'Abruptly cutting off all communication without explanation',
+                    'Pretending to be someone else online',
+                    'Deleting all your photos from the app'
+                ],
+                correct: 1,
+                explanation: 'Ghosting is when someone suddenly stops responding to messages and disappears without any explanation or closure.'
+            },
+            {
+                type: 'multiple',
+                question: 'What is a "SITUATIONSHIP"?',
+                options: [
+                    'A relationship that\'s complicated by distance',
+                    'An undefined romantic connection without commitment or labels',
+                    'A relationship that\'s only online',
+                    'A relationship between coworkers'
+                ],
+                correct: 1,
+                explanation: 'A situationship is an ambiguous romantic connection where the boundaries and commitment level are unclear or undefined.'
+            },
+            {
+                type: 'multiple',
+                question: 'What is the difference between "CASUAL" and "CAUSAL"?',
+                options: [
+                    'They mean the same thing',
+                    'Casual = informal/relaxed; Causal = relating to or acting as a cause',
+                    'Casual = a type of date; Causal = a type of relationship',
+                    'Causal is the British spelling of casual'
+                ],
+                correct: 1,
+                explanation: '"Casual" means informal or without serious commitment. "Causal" is an adjective meaning relating to a cause (e.g., "causal relationship").'
+            },
+            {
+                type: 'multiple',
+                question: 'What\'s the difference between "DATING" and "SEEING"?',
+                options: [
+                    'Dating is more serious than seeing',
+                    'Dating = actively going out on dates; Seeing = more consistent, often exclusive stage before officially becoming a couple',
+                    'They are exactly the same',
+                    'Seeing is only used for long-distance relationships'
+                ],
+                correct: 1,
+                explanation: 'Dating is often less committed (dating multiple people), while "seeing someone" implies a more consistent, exclusive connection.'
+            },
+            {
+                type: 'multiple',
+                question: 'What is "CHEMISTRY" in a relationship context?',
+                options: [
+                    'The scientific compatibility between two people',
+                    'The natural attraction and connection felt between two people',
+                    'A shared interest in science',
+                    'The ability to communicate effectively'
+                ],
+                correct: 1,
+                explanation: 'Chemistry refers to the natural, often inexplicable attraction and connection between two people that makes them feel compatible.'
+            },
+            {
+                type: 'multiple',
+                question: 'What does "KITTENFISHING" mean?',
+                options: [
+                    'Fishing for kittens online',
+                    'Presenting yourself as younger or more attractive in your profile than you actually are',
+                    'Dating multiple people at the same time',
+                    'Lying about your job or education'
+                ],
+                correct: 1,
+                explanation: 'Kittenfishing is a milder form of catfishing where someone presents a slightly misleading or outdated version of themselves online.'
+            },
+            {
+                type: 'multiple',
+                question: 'What\'s the difference between "COMMITMENT" and "COMPROMISE"?',
+                options: [
+                    'They mean the same thing',
+                    'Commitment = dedication to a partner; Compromise = meeting in the middle by making mutual concessions',
+                    'Commitment is more important than compromise',
+                    'Compromise is only needed in long-term relationships'
+                ],
+                correct: 1,
+                explanation: 'Commitment is dedication/loyalty to a relationship. Compromise is the act of meeting in the middle and making mutual concessions.'
+            },
+            {
+                type: 'multiple',
+                question: 'What is "ZOMBIEING"?',
+                options: [
+                    'Dating someone who is emotionally unavailable',
+                    'When someone who ghosted you suddenly reappears and tries to reconnect',
+                    'Pretending to be dead to avoid a date',
+                    'Dating someone who is very tired all the time'
+                ],
+                correct: 1,
+                explanation: 'Zombieing occurs when someone who previously ghosted you suddenly reappears and tries to resume contact as if nothing happened.'
+            },
+            {
+                type: 'fill',
+                question: 'Complete the sentence: "I\'m not looking for anything serious right now; I\'m just _______ people."',
+                correct: 'seeing',
+                wordBank: ['seeing', 'dating', 'meeting', 'watching'],
+                explanation: 'In this context, "seeing" implies a casual, non-committed connection with multiple people.'
+            },
+            {
+                type: 'fill',
+                question: 'Complete the sentence: "There\'s definitely _______ between us; we just click."',
+                correct: 'chemistry',
+                wordBank: ['chemistry', 'connection', 'attraction', 'compatibility'],
+                explanation: 'Chemistry describes that special, often unexplainable connection and attraction between two people.'
+            },
+            {
+                type: 'fill',
+                question: 'Complete the sentence: "He _______ me after we went on three dates without any explanation."',
+                correct: 'ghosted',
+                wordBank: ['ghosted', 'blocked', 'ignored', 'rejected'],
+                explanation: 'Ghosting means abruptly cutting off all communication without any explanation or closure.'
+            },
+            {
+                type: 'fill',
+                question: 'Complete the sentence: "We\'re in a _______ right now—we\'re not dating, but we\'re not just friends either."',
+                correct: 'situationship',
+                wordBank: ['situationship', 'relationship', 'friendship', 'connection'],
+                explanation: 'A situationship is an undefined romantic connection without clear commitment or labels.'
+            },
+            {
+                type: 'fill',
+                question: 'Complete the sentence: "I need a _______ relationship, not something casual."',
+                correct: 'committed',
+                wordBank: ['committed', 'serious', 'exclusive', 'real'],
+                explanation: 'Committed describes a relationship with dedication and loyalty to one another.'
+            },
+            {
+                type: 'multiple',
+                question: 'What\'s the difference between "TRUST" and "FAITH"?',
+                options: [
+                    'They mean exactly the same thing',
+                    'Trust = belief based on past evidence; Faith = complete confidence without requiring proof',
+                    'Trust is for romantic relationships; Faith is for friendships',
+                    'Faith is more important than trust'
+                ],
+                correct: 1,
+                explanation: 'Trust is built on evidence and past behavior. Faith is believing in someone without needing proof or evidence.'
+            },
+            {
+                type: 'multiple',
+                question: 'What does "CUSHIONING" mean in dating?',
+                options: [
+                    'Making your dating profile comfortable to read',
+                    'Maintaining multiple romantic interests as backup options',
+                    'Padding your profile with extra photos',
+                    'Being gentle when rejecting someone'
+                ],
+                correct: 1,
+                explanation: 'Cushioning is when someone maintains multiple romantic interests or connections as backup options in case their main relationship fails.'
+            },
+            {
+                type: 'fill',
+                question: 'Complete the sentence: "By the time we met in person, I realized there was no real _______ between us."',
+                correct: 'chemistry',
+                wordBank: ['chemistry', 'connection', 'spark', 'attraction'],
+                explanation: 'Chemistry refers to that natural, often indefinable connection and attraction between two people.'
+            },
+            {
+                type: 'multiple',
+                question: 'What is the most important factor in modern dating according to the lesson?',
+                options: [
+                    'Having the perfect profile photo',
+                    'Using dating apps exclusively',
+                    'Finding genuine connection despite technology',
+                    'Matching with as many people as possible'
+                ],
+                correct: 2,
+                explanation: 'The lesson emphasizes that despite all the technology and apps, finding genuine human connection remains the most important aspect of dating.'
+            },
+            {
+                type: 'fill',
+                question: 'Complete the sentence: "We had to _______ on where to live, but we made it work."',
+                correct: 'compromise',
+                wordBank: ['compromise', 'commit', 'communicate', 'cooperate'],
+                explanation: 'Compromise means meeting in the middle by making mutual concessions—essential in any relationship.'
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let answers = [];
+
+        function startQuiz() {
+            document.getElementById('introScreen').classList.add('hidden');
+            document.getElementById('progressContainer').style.display = 'flex';
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const question = questions[currentQuestionIndex];
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'question-container active';
+
+            let html = `
+                <div class="question-number">Question ${currentQuestionIndex + 1} of ${questions.length}</div>
+                <div class="question-text">${question.question}</div>
+            `;
+
+            if (question.type === 'multiple') {
+                html += '<div class="options">';
+                question.options.forEach((option, index) => {
+                    html += `<div class="option" onclick="selectOption(${index})">${option}</div>`;
+                });
+                html += '</div>';
+            } else if (question.type === 'fill') {
+                html += `
+                    <div class="word-bank">
+                        <div class="word-bank-label">Word Bank:</div>
+                        <div class="word-bank-words">
+                            ${question.wordBank.map(word => `<div class="word-bank-word">${word}</div>`).join('')}
+                        </div>
+                    </div>
+                    <input type="text" class="fill-input" id="fillInput" placeholder="Type your answer here..." />
+                `;
+            }
+
+            html += `
+                <div class="button-container">
+                    <button class="btn btn-primary" onclick="submitAnswer()">Check Answer</button>
+                </div>
+                <div class="explanation" id="explanation">
+                    <div class="explanation-title">Explanation:</div>
+                    <div id="explanationText"></div>
+                </div>
+            `;
+
+            questionDiv.innerHTML = html;
+            container.appendChild(questionDiv);
+
+            updateProgress();
+        }
+
+        function selectOption(index) {
+            document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+            document.querySelectorAll('.option')[index].classList.add('selected');
+            answers[currentQuestionIndex] = index;
+        }
+
+        function submitAnswer() {
+            const question = questions[currentQuestionIndex];
+            let isCorrect = false;
+
+            if (question.type === 'multiple') {
+                if (answers[currentQuestionIndex] === question.correct) {
+                    isCorrect = true;
+                }
+            } else if (question.type === 'fill') {
+                const userAnswer = document.getElementById('fillInput').value.toLowerCase().trim();
+                if (userAnswer === question.correct.toLowerCase()) {
+                    isCorrect = true;
+                }
+            }
+
+            if (isCorrect) {
+                score++;
+                if (question.type === 'multiple') {
+                    document.querySelectorAll('.option')[question.correct].classList.add('correct');
+                }
+            } else {
+                if (question.type === 'multiple') {
+                    if (answers[currentQuestionIndex] !== undefined) {
+                        document.querySelectorAll('.option')[answers[currentQuestionIndex]].classList.add('incorrect');
+                    }
+                    document.querySelectorAll('.option')[question.correct].classList.add('correct');
+                }
+            }
+
+            document.getElementById('explanation').classList.add('show');
+            document.getElementById('explanationText').textContent = question.explanation;
+
+            document.querySelectorAll('.option').forEach(opt => opt.style.pointerEvents = 'none');
+            document.getElementById('fillInput').disabled = true;
+
+            const btn = document.querySelector('.btn-primary');
+            btn.textContent = 'Next Question';
+            btn.onclick = nextQuestion;
+
+            updateProgress();
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                renderQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function updateProgress() {
+            document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
+            document.getElementById('correctCount').textContent = score;
+            const progressPercent = ((currentQuestionIndex + 1) / questions.length) * 100;
+            document.getElementById('progressBar').style.width = progressPercent + '%';
+        }
+
+        function showResults() {
+            document.getElementById('questionsContainer').innerHTML = '';
+            document.getElementById('progressContainer').style.display = 'none';
+            document.getElementById('resultsScreen').classList.add('show');
+
+            const percentage = (score / questions.length) * 100;
+            document.getElementById('finalScore').textContent = `${score}/${questions.length}`;
+            document.getElementById('finalPercentage').textContent = `${percentage.toFixed(0)}%`;
+            document.getElementById('detailCorrect').textContent = score;
+            document.getElementById('detailIncorrect').textContent = questions.length - score;
+            document.getElementById('detailAccuracy').textContent = `${percentage.toFixed(1)}%`;
+
+            let message = '';
+            if (percentage === 100) {
+                message = '🎉 Perfect Score! You\'re a dating vocabulary expert!';
+            } else if (percentage >= 80) {
+                message = '🌟 Excellent! You have a strong grasp of dating terminology!';
+            } else if (percentage >= 60) {
+                message = '👍 Good job! You understand most dating vocabulary and grammar concepts.';
+            } else if (percentage >= 40) {
+                message = '📚 Not bad! Review the material and try again to improve your score.';
+            } else {
+                message = '💪 Keep practicing! Dating vocabulary takes time to master.';
+            }
+
+            document.getElementById('resultMessage').textContent = message;
+        }
+    </script>
+</body>
+</html>
