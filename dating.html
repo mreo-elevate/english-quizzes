@@ -723,7 +723,7 @@
             if (question.type === 'multiple') {
                 html += '<div class="options">';
                 question.options.forEach((option, index) => {
-                    html += `<div class="option" onclick="selectOption(${index})">${option}</div>`;
+                    html += `<div class="option" onclick="selectOption(${index})" style="cursor: pointer;">${option}</div>`;
                 });
                 html += '</div>';
             } else if (question.type === 'fill') {
@@ -734,13 +734,13 @@
                             ${question.wordBank.map(word => `<div class="word-bank-word">${word}</div>`).join('')}
                         </div>
                     </div>
-                    <input type="text" class="fill-input" id="fillInput" placeholder="Type your answer here..." />
+                    <input type="text" class="fill-input" id="fillInput" placeholder="Type your answer here..." onkeypress="if(event.key==='Enter') submitAnswer()" autofocus />
                 `;
             }
 
             html += `
                 <div class="button-container">
-                    <button class="btn btn-primary" onclick="submitAnswer()">Check Answer</button>
+                    <button class="btn btn-primary" onclick="submitAnswer()">Next Question</button>
                 </div>
                 <div class="explanation" id="explanation">
                     <div class="explanation-title">Explanation:</div>
@@ -758,6 +758,7 @@
             document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
             document.querySelectorAll('.option')[index].classList.add('selected');
             answers[currentQuestionIndex] = index;
+            submitAnswer();
         }
 
         function submitAnswer() {
@@ -793,7 +794,9 @@
             document.getElementById('explanationText').textContent = question.explanation;
 
             document.querySelectorAll('.option').forEach(opt => opt.style.pointerEvents = 'none');
-            document.getElementById('fillInput').disabled = true;
+            if (document.getElementById('fillInput')) {
+                document.getElementById('fillInput').disabled = true;
+            }
 
             const btn = document.querySelector('.btn-primary');
             btn.textContent = 'Next Question';
