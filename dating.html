@@ -800,7 +800,7 @@
 
             const btn = document.querySelector('.btn-primary');
             btn.textContent = 'Next Question';
-            btn.onclick = nextQuestion;
+            btn.onclick = () => nextQuestion();
 
             updateProgress();
         }
@@ -808,6 +808,7 @@
         function nextQuestion() {
             currentQuestionIndex++;
             if (currentQuestionIndex < questions.length) {
+                document.getElementById('questionsContainer').innerHTML = '';
                 renderQuestion();
             } else {
                 showResults();
