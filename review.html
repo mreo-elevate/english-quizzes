@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cumulative Grammar Review Quiz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1A2744;
+            --secondary: #C8A96E;
+            --accent: #D4556B;
+            --bg: #F8F9FA;
+            --text: #212529;
+            --white: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+
+        .container { max-width: 800px; margin: 40px auto; padding: 20px; }
+        .header { text-align: center; margin-bottom: 40px; }
+        .header h1 { font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; color: var(--primary); margin-bottom: 10px; }
+        .header p { color: #666; font-size: 1.1rem; }
+
+        .quiz-card { background: var(--white); padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-bottom: 20px; position: relative; }
+        .progress-bar { height: 6px; background: #eee; border-radius: 3px; margin-bottom: 30px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--secondary); width: 0%; transition: width 0.3s ease; }
+
+        .question-text { font-family: 'Space Grotesk', sans-serif; font-size: 1.4rem; font-weight: 700; margin-bottom: 25px; color: var(--primary); }
+        .options-grid { display: grid; gap: 12px; }
+        .option-btn { 
+            padding: 15px 20px; border: 2px solid #eee; border-radius: 8px; background: none; cursor: pointer;
+            text-align: left; font-size: 1rem; transition: all 0.2s; font-family: inherit; color: var(--text);
+        }
+        .option-btn:hover { border-color: var(--secondary); background: rgba(200, 169, 110, 0.05); }
+        .option-btn.correct { background: #d4edda; border-color: #28a745; color: #155724; }
+        .option-btn.wrong { background: #f8d7da; border-color: #dc3545; color: #721c24; }
+
+        .explanation { margin-top: 20px; padding: 20px; border-radius: 8px; background: #e7f3ff; border-left: 4px solid #007bff; display: none; }
+        .next-btn { 
+            display: none; margin-top: 30px; padding: 12px 30px; background: var(--primary); color: var(--white);
+            border: none; border-radius: 6px; font-weight: 700; cursor: pointer; float: right;
+        }
+
+        .results-screen { text-align: center; display: none; }
+        .score-circle { 
+            width: 150px; height: 150px; border-radius: 50%; border: 8px solid var(--secondary);
+            margin: 0 auto 30px; display: flex; align-items: center; justify-content: center;
+            font-size: 2.5rem; font-weight: 700; font-family: 'Space Grotesk', sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="quiz-screen">
+            <div class="header">
+                <h1>Grammar Review</h1>
+                <p>Cumulative Quiz: Lessons 1-5</p>
+            </div>
+            <div class="quiz-card">
+                <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+                <div id="questionContainer"></div>
+                <div id="explanation" class="explanation"></div>
+                <button id="nextBtn" class="next-btn">Next Question</button>
+            </div>
+        </div>
+
+        <div id="results-screen" class="results-screen">
+            <div class="quiz-card">
+                <div class="header">
+                    <h1>Quiz Complete!</h1>
+                    <p>Your performance summary</p>
+                </div>
+                <div class="score-circle" id="scoreDisplay">0/30</div>
+                <h2 id="feedbackTitle">Good Job!</h2>
+                <p id="feedbackText" style="margin-bottom: 30px;"></p>
+                <button onclick="location.reload()" class="next-btn" style="float: none; display: inline-block;">Try Again</button>
+                <a href="index.html" class="next-btn" style="float: none; display: inline-block; background: #666; text-decoration: none;">Back to Home</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            // USA & Conversions (6)
+            { q: "How many centimeters are approximately in 1 inch?", a: ["2.54", "3.14", "1.50", "5.00"], correct: 0, exp: "1 inch is exactly 2.54 centimeters." },
+            { q: "A person who is 6 feet tall is roughly how many meters?", a: ["1.50m", "1.65m", "1.83m", "2.00m"], correct: 2, exp: "6 feet is approximately 1.83 meters (1 foot ≈ 30.48cm)." },
+            { q: "If a recipe calls for 1 pound of meat, how many grams do you need?", a: ["250g", "454g", "500g", "1000g"], correct: 1, exp: "1 pound (lb) is approximately 453.59 grams." },
+            { q: "Which unit is used to measure long distances in the US?", a: ["Kilometer", "League", "Yard", "Mile"], correct: 3, exp: "Miles are used for long distances; 1 mile is about 1.6 kilometers." },
+            { q: "How many ounces (oz) are in a standard US cup of liquid?", a: ["4 oz", "8 oz", "12 oz", "16 oz"], correct: 1, exp: "A standard US cup is 8 fluid ounces." },
+            { q: "If the temperature is 32°F, what is it in Celsius?", a: ["-10°C", "0°C", "10°C", "32°C"], correct: 1, exp: "32°F is the freezing point of water, which is 0°C." },
+            
+            // Canada & Loanwords (6)
+            { q: "Which French loanword refers to a summary of professional experience?", a: ["Dossier", "Rapport", "Résumé", "Boutique"], correct: 2, exp: "Résumé is the standard term for a CV in North America." },
+            { q: "If someone makes a social mistake, they have made a:", a: ["Faux pas", "Déjà vu", "C'est la vie", "En route"], correct: 0, exp: "Faux pas literally means 'false step' and refers to a social blunder." },
+            { q: "Which word describes a feeling that you have experienced a current situation before?", a: ["Vis-à-vis", "Déjà vu", "Cliché", "Malaise"], correct: 1, exp: "Déjà vu means 'already seen'." },
+            { q: "A small, stylish clothing store is often called a:", a: ["Atelier", "Boutique", "Garage", "Café"], correct: 1, exp: "Boutique is a French loanword for a small shop." },
+            { q: "Which term refers to the main course of a meal in North America?", a: ["Hors d'oeuvre", "Aperitif", "Entrée", "Dessert"], correct: 2, exp: "In the US and Canada, 'Entrée' refers to the main dish." },
+            { q: "If you are 'en route', you are:", a: ["Finished", "Lost", "On the way", "Waiting"], correct: 2, exp: "En route means 'on the way' or 'in transit'." },
+
+            // Longevity & Future Perfect (6)
+            { q: "By 2050, scientists _______ a cure for most cancers.", a: ["will discover", "will have discovered", "have discovered", "will be discovering"], correct: 1, exp: "Future Perfect (will have + past participle) is used for actions completed by a certain point in the future." },
+            { q: "By the time he turns 100, he _______ $2 million on his health.", a: ["will spend", "spends", "will have spent", "will be spending"], correct: 2, exp: "Use Future Perfect to describe an accumulated action by a future deadline." },
+            { q: "Within the next decade, AI _______ the medical field.", a: ["will have transformed", "has transformed", "transforms", "will transform"], correct: 0, exp: "Future Perfect is correct here to show completion within a time frame." },
+            { q: "_______ 2030, many people will have adopted the Blueprint protocol.", a: ["Since", "Until", "By", "For"], correct: 2, exp: "'By' is the most common time expression used with the Future Perfect." },
+            { q: "By next year, I _______ my medical degree.", a: ["will finish", "will have finished", "finish", "have finished"], correct: 1, exp: "Future Perfect indicates completion before a specific future time." },
+            { q: "They _______ the new longevity clinic by the end of the month.", a: ["will have opened", "open", "have opened", "will open"], correct: 0, exp: "Future Perfect shows the action will be finished by the deadline." },
+
+            // Dating & Confusing Pairs (6)
+            { q: "We are just friends; our relationship is strictly _______.", a: ["Causal", "Casual", "Case", "Cause"], correct: 1, exp: "Casual means relaxed or informal. Causal relates to cause and effect." },
+            { q: "There is a _______ link between smoking and lung cancer.", a: ["Casual", "Causal", "Casually", "Caused"], correct: 1, exp: "Causal indicates a cause-and-effect relationship." },
+            { q: "I am _______ someone new, but it's not serious yet.", a: ["Watching", "Looking", "Seeing", "Viewing"], correct: 2, exp: "In dating, 'seeing someone' means dating them informally." },
+            { q: "A healthy relationship requires both _______ and compromise.", a: ["Commitment", "Commission", "Commute", "Comment"], correct: 0, exp: "Commitment is the dedication to a person or cause." },
+            { q: "We had to _______ on the movie choice.", a: ["Compromise", "Commitment", "Compose", "Comprise"], correct: 0, exp: "Compromise means to reach an agreement by each side making concessions." },
+            { q: "Being _______ means being open about your feelings.", a: ["Vulnerable", "Weak", "Fragile", "Broken"], correct: 0, exp: "Vulnerability is a strength in relationships, meaning emotional openness." },
+
+            // Psychology & Homophones (6)
+            { q: "She loved him with her _______ heart.", a: ["Hole", "Whole", "Wholly", "Hold"], correct: 1, exp: "Whole means entire/complete. Hole is a gap." },
+            { q: "He felt the connection deep in his _______.", a: ["Sole", "Soul", "Sell", "Soil"], correct: 1, exp: "Soul is the spiritual essence. Sole means only or the bottom of a foot." },
+            { q: "They decided to tie the _______ after three years.", a: ["Not", "Knot", "Note", "Night"], correct: 1, exp: "Knot is a fastening. 'Tie the knot' is an idiom for getting married." },
+            { q: "He laid his feelings _______ in the letter.", a: ["Bear", "Bare", "Beer", "Bar"], correct: 1, exp: "Bare means uncovered/exposed. Bear is the animal or to carry." },
+            { q: "She could not _______ the thought of losing him.", a: ["Bare", "Bear", "Beer", "Bore"], correct: 1, exp: "Bear means to endure or carry a burden." },
+            { q: "The loss left a _______ in his life.", a: ["Whole", "Hole", "Hall", "Hull"], correct: 1, exp: "Hole refers to an empty space or gap." }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let answered = false;
+
+        function renderQuestion() {
+            const q = questions[currentQuestion];
+            const container = document.getElementById('questionContainer');
+            const progress = ((currentQuestion) / questions.length) * 100;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+
+            container.innerHTML = `
+                <div class="question-text">${currentQuestion + 1}. ${q.q}</div>
+                <div class="options-grid">
+                    ${q.a.map((opt, i) => `
+                        <button class="option-btn" onclick="checkAnswer(${i})">${opt}</button>
+                    `).join('')}
+                </div>
+            `;
+            
+            document.getElementById('explanation').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+            answered = false;
+        }
+
+        function checkAnswer(idx) {
+            if (answered) return;
+            answered = true;
+            
+            const q = questions[currentQuestion];
+            const btns = document.getElementsByClassName('option-btn');
+            
+            if (idx === q.correct) {
+                btns[idx].classList.add('correct');
+                score++;
+            } else {
+                btns[idx].classList.add('wrong');
+                btns[q.correct].classList.add('correct');
+            }
+
+            const exp = document.getElementById('explanation');
+            exp.innerHTML = `<strong>${idx === q.correct ? 'Correct!' : 'Incorrect.'}</strong> ${q.exp}`;
+            exp.style.display = 'block';
+            
+            document.getElementById('nextBtn').style.display = 'block';
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').innerText = 'Finish Quiz';
+            }
+        }
+
+        document.getElementById('nextBtn').onclick = () => {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                renderQuestion();
+            } else {
+                showResults();
+            }
+        };
+
+        function showResults() {
+            document.getElementById('quiz-screen').style.display = 'none';
+            document.getElementById('results-screen').style.display = 'block';
+            document.getElementById('scoreDisplay').innerText = `${score}/${questions.length}`;
+            
+            const percentage = (score / questions.length) * 100;
+            let title = "Keep Practicing!";
+            let text = "Grammar takes time to master. Review the lessons and try again!";
+            
+            if (percentage >= 90) {
+                title = "Excellent!";
+                text = "You have a fantastic grasp of the grammar from the last 5 lessons!";
+            } else if (percentage >= 70) {
+                title = "Great Job!";
+                text = "You've mastered most of the concepts. Just a few more reviews to go!";
+            }
+            
+            document.getElementById('feedbackTitle').innerText = title;
+            document.getElementById('feedbackText').innerText = text;
+        }
+
+        renderQuestion();
+    </script>
+</body>
+</html>
